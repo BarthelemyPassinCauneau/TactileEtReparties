@@ -4,12 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class ProfChooseExe : MonoBehaviour
+public class ProfExe : MonoBehaviour
 {
     [SerializeField] TMP_Dropdown ChooseKey;
     [SerializeField] TMP_Dropdown ChooseNote;
+    [SerializeField] TMP_Text LabelKey;
+    [SerializeField] TMP_Text LabelNote;
     [SerializeField] Image image;
+    [SerializeField] TMP_Text feedback;
     string imagePath = "";
+    string correctAnswer = "";
 
     void Start()
     {
@@ -24,20 +28,25 @@ public class ProfChooseExe : MonoBehaviour
         ChooseNote.options.Add (new TMP_Dropdown.OptionData() {text="Sol"});
         ChooseNote.options.Add (new TMP_Dropdown.OptionData() {text="La"});
         ChooseNote.options.Add (new TMP_Dropdown.OptionData() {text="Si"});
-
+        LabelKey.text = ChooseKey.options[0].text;
+        LabelNote.text = ChooseNote.options[0].text;
     }
 
     void Update()
     {
         if ("Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text != imagePath){
             imagePath = "Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text;
+            correctAnswer = ChooseNote.options[ChooseNote.value].text;
             image.sprite = Resources.Load<Sprite>(imagePath);
         }
     }
 
     public void SendExercice(){
-        if (imagePath != ""){
-            //Photon code, send img path & correct answer to students
-        } 
+        feedback.gameObject.SetActive(true);
+        feedback.text = "Exercice sent";
+        feedback.color = Color.green;
+        
+        //Photon, send imagePath & correctAnswer to students
     }
+
 }
