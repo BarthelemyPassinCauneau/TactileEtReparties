@@ -22,7 +22,7 @@ public class JoinRoom : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom() {
         _waitingRoomCanvas.SetActive(true);
         _menuCanvas.SetActive(false);
-        _startButton.SetActive(false);
+        //_startButton.SetActive(false);
         _listing.RefreshList();
     }
 }
