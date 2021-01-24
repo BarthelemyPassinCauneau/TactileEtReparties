@@ -386,7 +386,7 @@ GameObject:
   - component: {fileID: 172887428}
   - component: {fileID: 172887427}
   m_Layer: 5
-  m_Name: AnswerLabel
+  m_Name: LabelAnswer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1272,7 +1272,7 @@ GameObject:
   - component: {fileID: 969587753}
   - component: {fileID: 969587752}
   m_Layer: 5
-  m_Name: Title
+  m_Name: LabelTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1851,7 +1851,7 @@ GameObject:
   - component: {fileID: 1403515926}
   - component: {fileID: 1403515925}
   m_Layer: 5
-  m_Name: Parler
+  m_Name: Speak
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

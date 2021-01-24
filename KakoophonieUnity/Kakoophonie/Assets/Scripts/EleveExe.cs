@@ -15,6 +15,15 @@ public class EleveExe : MonoBehaviour
 
     void Start()
     {
+        InitDropdown();
+
+        //Cheat without Photon ReceiveExercice, to remove
+        imagePath = "Images/Ut/Do";
+        correctAnswer = "Do";
+        image.sprite = Resources.Load<Sprite>(imagePath);
+    }
+
+    void InitDropdown(){
         ChooseNote.ClearOptions();
         ChooseNote.options.Add (new TMP_Dropdown.OptionData() {text="Do"});
         ChooseNote.options.Add (new TMP_Dropdown.OptionData() {text="Re"});
@@ -24,14 +33,9 @@ public class EleveExe : MonoBehaviour
         ChooseNote.options.Add (new TMP_Dropdown.OptionData() {text="La"});
         ChooseNote.options.Add (new TMP_Dropdown.OptionData() {text="Si"});
         LabelNote.text = ChooseNote.options[0].text;
-
-        //Cheat without Photon ReceiveExercice
-        imagePath = "Images/Ut/Do";
-        correctAnswer = "Do";
-        image.sprite = Resources.Load<Sprite>(imagePath);
     }
 
-    void ReceiveExercice(){
+    void ReceiveExercise(){
         feedback.gameObject.SetActive(false);
 
         //Photon, get infos from ProfExe.cs SendExercice()
