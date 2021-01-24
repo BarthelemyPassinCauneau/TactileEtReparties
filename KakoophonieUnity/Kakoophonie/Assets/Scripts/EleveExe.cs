@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Photon.Pun;
 
-public class EleveExe : MonoBehaviour
+public class EleveExe : MonoBehaviourPun
 {
     [SerializeField] TMP_Dropdown ChooseNote;
     [SerializeField] TMP_Text LabelNote;
@@ -17,10 +18,6 @@ public class EleveExe : MonoBehaviour
     {
         InitDropdown();
 
-        //Cheat without Photon ReceiveExercice, to remove
-        imagePath = "Images/Ut/Do";
-        correctAnswer = "Do";
-        image.sprite = Resources.Load<Sprite>(imagePath);
     }
 
     void InitDropdown(){
@@ -35,12 +32,12 @@ public class EleveExe : MonoBehaviour
         LabelNote.text = ChooseNote.options[0].text;
     }
 
-    void ReceiveExercise(){
+    [PunRPC]
+    public void ReceiveExercise(string key, string note){
         feedback.gameObject.SetActive(false);
-
-        //Photon, get infos from ProfExe.cs SendExercice()
-        //imagePath = ...
-        //correctAnswer = ...
+        imagePath = "Images/"+key+"/"+note;
+        correctAnswer = note;
+        image.sprite = Resources.Load<Sprite>(imagePath);
     }
 
     public void ConfirmAnswer(){

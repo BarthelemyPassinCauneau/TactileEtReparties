@@ -6,7 +6,7 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class ProfExe : MonoBehaviour
+public class ProfExe : MonoBehaviourPun
 {
     [SerializeField] TMP_Dropdown ChooseKey;
     [SerializeField] TMP_Dropdown ChooseNote;
@@ -59,17 +59,14 @@ public class ProfExe : MonoBehaviour
         feedback.gameObject.SetActive(true);
         feedback.text = "Exercice envoyé";
         feedback.color = Color.green;
-
+        
         //Photon, send imagePath & correctAnswer to students
+        photonView.RPC("ReceiveExercise", RpcTarget.Others, ChooseKey.options[ChooseKey.value].text, ChooseNote.options[ChooseNote.value].text);
     }
 
     public void ReceiveAnswer(){
         //Photon update answerList
 
-        //Cheat without Photon ReceiveExercise, to remove
-        Player current = PhotonNetwork.PlayerList[1];
-        string answer = "Do";
-        UpdateAnswer(current, answer);
     }
 
     private void UpdateAnswer(Player current, string answer){
