@@ -5,10 +5,14 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 public class RedirectStudents : MonoBehaviour
 {
+    [SerializeField] Canvas Professor;
+    [SerializeField] Canvas Student;
     void Start()
     {
         if(!PhotonNetwork.IsMasterClient) {
-            SceneManager.LoadScene("Eleve");
+            Professor.gameObject.SetActive(false);
+        } else {
+            Student.gameObject.SetActive(false);
         }
     }
 }

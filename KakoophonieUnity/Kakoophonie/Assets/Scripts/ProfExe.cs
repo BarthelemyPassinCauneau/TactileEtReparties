@@ -32,7 +32,6 @@ public class ProfExe : MonoBehaviour
         if ("Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text != imagePath){
             imagePath = "Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text;
             correctAnswer = ChooseNote.options[ChooseNote.value].text;
-            Debug.Log("correct : "+correctAnswer);
             image.sprite = Resources.Load<Sprite>(imagePath);
         }
 

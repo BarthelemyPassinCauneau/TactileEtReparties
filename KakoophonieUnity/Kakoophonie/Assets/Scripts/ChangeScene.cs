@@ -7,9 +7,8 @@ using Photon.Pun;
 public class ChangeScene : MonoBehaviour {
 
     public void StartGame() {
-        PhotonNetwork.LoadLevel("Professeur");
+        PhotonNetwork.LoadLevel("Exercise");
     }
-
     public void LoadMenu(){
         SceneManager.LoadScene("Menu");
     }
