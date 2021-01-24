@@ -51,5 +51,6 @@ public class EleveExe : MonoBehaviourPun
         }
 
         //Photon, send my answer to professor
+        photonView.RPC("ReceiveAnswer", RpcTarget.MasterClient, ChooseNote.options[ChooseNote.value].text);
     }
 }

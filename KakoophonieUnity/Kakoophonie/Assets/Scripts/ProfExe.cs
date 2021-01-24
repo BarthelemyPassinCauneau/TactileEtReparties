@@ -34,9 +34,6 @@ public class ProfExe : MonoBehaviourPun
             correctAnswer = ChooseNote.options[ChooseNote.value].text;
             image.sprite = Resources.Load<Sprite>(imagePath);
         }
-
-        //Photon cheat, to remove
-        ReceiveAnswer();
     }
 
     void InitDropdown(){
@@ -64,9 +61,10 @@ public class ProfExe : MonoBehaviourPun
         photonView.RPC("ReceiveExercise", RpcTarget.Others, ChooseKey.options[ChooseKey.value].text, ChooseNote.options[ChooseNote.value].text);
     }
 
-    public void ReceiveAnswer(){
+    [PunRPC]
+    public void ReceiveAnswer(string answer, PhotonMessageInfo info){
         //Photon update answerList
-
+        UpdateAnswer(info.Sender, answer);
     }
 
     private void UpdateAnswer(Player current, string answer){
