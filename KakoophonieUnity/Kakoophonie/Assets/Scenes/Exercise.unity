@@ -7370,7 +7370,7 @@ GameObject:
   - component: {fileID: 1861034767}
   - component: {fileID: 1861034766}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Confirm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8314,6 +8314,7 @@ MonoBehaviour:
   LabelNote: {fileID: 2006593929}
   image: {fileID: 1887497045}
   feedback: {fileID: 1769187166}
+  confirm: {fileID: 1861034766}
 --- !u!114 &2114337200
 MonoBehaviour:
   m_ObjectHideFlags: 0

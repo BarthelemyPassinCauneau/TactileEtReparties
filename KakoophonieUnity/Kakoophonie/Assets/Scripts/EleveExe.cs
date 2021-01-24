@@ -11,13 +11,14 @@ public class EleveExe : MonoBehaviourPun
     [SerializeField] TMP_Text LabelNote;
     [SerializeField] Image image;
     [SerializeField] TMP_Text feedback;
+    [SerializeField] Button confirm;
     string imagePath = "";
     string correctAnswer = "";
 
     void Start()
     {
         InitDropdown();
-
+        confirm.interactable = false;
     }
 
     void InitDropdown(){
@@ -34,6 +35,7 @@ public class EleveExe : MonoBehaviourPun
 
     [PunRPC]
     public void ReceiveExercise(string key, string note){
+        confirm.interactable = true;
         feedback.gameObject.SetActive(false);
         imagePath = "Images/"+key+"/"+note;
         correctAnswer = note;
@@ -41,15 +43,15 @@ public class EleveExe : MonoBehaviourPun
     }
 
     public void ConfirmAnswer(){
+        confirm.interactable = false;
         feedback.gameObject.SetActive(true);
         if (ChooseNote.options[ChooseNote.value].text == correctAnswer){
-            feedback.text = "Good answer";
+            feedback.text = "Bonne répense";
             feedback.color = Color.green; 
         } else {
-            feedback.text = "Wrong answer";
+            feedback.text = "Mauvaise réponse";
             feedback.color = Color.yellow;
         }
-
         //Photon, send my answer to professor
         photonView.RPC("ReceiveAnswer", RpcTarget.MasterClient, ChooseNote.options[ChooseNote.value].text);
     }

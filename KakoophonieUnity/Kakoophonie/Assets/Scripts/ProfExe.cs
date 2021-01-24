@@ -56,7 +56,10 @@ public class ProfExe : MonoBehaviourPun
         feedback.gameObject.SetActive(true);
         feedback.text = "Exercice envoyé";
         feedback.color = Color.green;
-        
+        //Reset student answers
+        for(int i = 0; i < studentList.Count; i++){
+            answerList[i].text = "";
+        }
         //Photon, send imagePath & correctAnswer to students
         photonView.RPC("ReceiveExercise", RpcTarget.Others, ChooseKey.options[ChooseKey.value].text, ChooseNote.options[ChooseNote.value].text);
     }
@@ -71,8 +74,6 @@ public class ProfExe : MonoBehaviourPun
         for(int i = 0; i < studentList.Count; i++){
             if (PhotonNetwork.PlayerList[i+1] == current){
                 answerList[i].text = answer;
-                Debug.Log(answer);
-                Debug.Log(correctAnswer);
                 if(answer == correctAnswer){
                     answerList[i].color = Color.green;
                 } else {
