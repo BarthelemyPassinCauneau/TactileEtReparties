@@ -3,26 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
 
 public class JoinRoom : MonoBehaviourPunCallbacks
 {
-    static private int index = 1;
-
-    [SerializeField] private GameObject _waitingRoomCanvas = null;
-    [SerializeField] private GameObject _menuCanvas = null;
-    [SerializeField] private GameObject _startButton = null;
-    [SerializeField] private ParticipantsListingMenu _listing = null;
+    [SerializeField] private TMP_InputField _name = null;
+    [SerializeField] private TMP_Text _textError = null;
 
     public void ButtonJoinRoom() {
-        PhotonNetwork.NickName = "Eleve "+index;
-        index++;
+        PhotonNetwork.NickName = _name.text;
         PhotonNetwork.JoinRoom("Room test");
     }
 
-    public override void OnJoinedRoom() {
-        _waitingRoomCanvas.SetActive(true);
-        _menuCanvas.SetActive(false);
-        //_startButton.SetActive(false);
-        _listing.RefreshList();
-    }
+    //OnJoinedRoom implementé dans CreateRoom.cs
 }

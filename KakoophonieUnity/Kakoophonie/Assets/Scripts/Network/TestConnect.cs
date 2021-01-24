@@ -13,9 +13,9 @@ public class TestConnect : MonoBehaviourPunCallbacks
     }
 
     public override void OnConnectedToMaster() {
-        Debug.Log("Photon connected");
         _text.text = "Connecté !";
         _text.color = new Color(0, 255, 0);
         PhotonNetwork.JoinLobby(TypedLobby.Default);
+        PhotonNetwork.AutomaticallySyncScene = true;
     }
 }

@@ -9,21 +9,27 @@ public class ParticipantsListingMenu : MonoBehaviourPunCallbacks
 {
     [SerializeField] private ParticipantItem _participantItem = null;
     [SerializeField] private Transform _content = null;
+    [SerializeField] private GameObject _startButton = null;
 
-    private Dictionary<string, ParticipantItem> ParticipantsList = new Dictionary<string, ParticipantItem>();
+    private Dictionary<int, ParticipantItem> ParticipantsList = new Dictionary<int, ParticipantItem>();
+
+    private void Start() {
+        RefreshList();
+        _startButton.SetActive(PhotonNetwork.IsMasterClient);
+    }
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         ParticipantItem participant = Instantiate(_participantItem, _content);
-        ParticipantsList[newPlayer.NickName] = participant;
+        ParticipantsList[newPlayer.ActorNumber] = participant;
         participant.SetParticipantInfo(newPlayer.NickName);
     }
 
     public void RefreshList() {
         foreach (Player player in PhotonNetwork.PlayerList)
         {
-            if(!ParticipantsList.ContainsKey(player.NickName)) {
+            if(!ParticipantsList.ContainsKey(player.ActorNumber)) {
                 ParticipantItem participant = Instantiate(_participantItem, _content);
-                ParticipantsList[player.NickName] = participant;
+                ParticipantsList[player.ActorNumber] = participant;
                 participant.SetParticipantInfo(player.NickName);
             }
         }
@@ -31,7 +37,7 @@ public class ParticipantsListingMenu : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        Destroy(ParticipantsList[otherPlayer.NickName].gameObject);
-        ParticipantsList.Remove(otherPlayer.NickName);
+        Destroy(ParticipantsList[otherPlayer.ActorNumber].gameObject);
+        ParticipantsList.Remove(otherPlayer.ActorNumber);
     }
 }

@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
 
 public class ChangeScene : MonoBehaviour {
-    public void LoadProf(){
-        SceneManager.LoadScene("Professeur");
-    }
 
-    public void LoadEleve(){
-        SceneManager.LoadScene("Eleve");
+    public void StartGame() {
+        PhotonNetwork.LoadLevel("Professeur");
     }
 
     public void LoadMenu(){
