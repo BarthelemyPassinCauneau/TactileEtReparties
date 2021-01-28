@@ -57,7 +57,7 @@ sysinfo.txt
 
 # Builds
 *.aab
-
+*.apk
 # Crashlytics generated file
 crashlytics-build.properties
 
