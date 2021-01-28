@@ -31,12 +31,14 @@ public class EleveExe : MonoBehaviourPun
         ChooseNote.options.Add (new TMP_Dropdown.OptionData() {text="La"});
         ChooseNote.options.Add (new TMP_Dropdown.OptionData() {text="Si"});
         LabelNote.text = ChooseNote.options[0].text;
+        feedback.text = "En attente ...";
+        feedback.color = Color.gray; 
     }
 
     [PunRPC]
     public void ReceiveExercise(string key, string note){
         confirm.interactable = true;
-        feedback.gameObject.SetActive(false);
+        feedback.text = "";
         imagePath = "Images/"+key+"/"+note;
         correctAnswer = note;
         image.sprite = Resources.Load<Sprite>(imagePath);
@@ -53,9 +55,8 @@ public class EleveExe : MonoBehaviourPun
 
     public void ConfirmAnswer(){
         confirm.interactable = false;
-        feedback.gameObject.SetActive(true);
         if (ChooseNote.options[ChooseNote.value].text == correctAnswer){
-            feedback.text = "Bonne répense";
+            feedback.text = "Bonne réponse";
             feedback.color = Color.green; 
         } else {
             feedback.text = "Mauvaise réponse";

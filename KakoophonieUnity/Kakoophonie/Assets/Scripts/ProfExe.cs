@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Photon.Pun;
-using Photon.Realtime;
+using Photon.Realtime; 
 
+namespace Exe{
 public class ProfExe : MonoBehaviourPunCallbacks
 {
     [SerializeField] TMP_Dropdown ChooseKey = null;
@@ -18,7 +19,7 @@ public class ProfExe : MonoBehaviourPunCallbacks
     [SerializeField] List<TMP_Text> answerList = null;
     string imagePath = "";
     string correctAnswer = "";
-    List<Player> studentList = new List<Player>();
+    List<Players> studentList = new List<Players>();
 
     void Start()
     {
@@ -53,15 +54,24 @@ public class ProfExe : MonoBehaviourPunCallbacks
     }
 
     public void SendExercise(){
-        feedback.gameObject.SetActive(true);
+        IEnumerator coroutine;
         feedback.text = "Exercice envoyé";
+        coroutine = WaitAndHide(2);
+        StartCoroutine(coroutine);
         feedback.color = Color.green;
         //Reset student answers
         for(int i = 0; i < studentList.Count; i++){
             answerList[i].text = "";
+            studentList[i].answer = "";
         }
         //Photon, send imagePath & correctAnswer to students
         photonView.RPC("ReceiveExercise", RpcTarget.Others, ChooseKey.options[ChooseKey.value].text, ChooseNote.options[ChooseNote.value].text);
+    }
+
+    private IEnumerator WaitAndHide(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        feedback.text = "";
     }
 
     [PunRPC]
@@ -73,6 +83,7 @@ public class ProfExe : MonoBehaviourPunCallbacks
     private void UpdateAnswer(Player current, string answer){
         for(int i = 0; i < studentList.Count; i++){
             if (PhotonNetwork.PlayerList[i+1] == current){
+                studentList[i].answer = answer;
                 answerList[i].text = answer;
                 if(answer == correctAnswer){
                     answerList[i].color = Color.green;
@@ -87,15 +98,33 @@ public class ProfExe : MonoBehaviourPunCallbacks
         for(int i = 0; i < studentList.Count; i++){
             nameList[i].gameObject.SetActive(true);
             answerList[i].gameObject.SetActive(true);
-            answerList[i].text = "";
-            nameList[i].text = studentList[i].NickName;
+            answerList[i].text = studentList[i].answer;
+            if(studentList[i].answer == correctAnswer){
+                answerList[i].color = Color.green;
+            } else {
+                answerList[i].color = Color.yellow;
+            }
+            nameList[i].text = studentList[i].player.NickName;
         }
     }
+
+    private void ResetDisplay(){
+        for(int i = 0; i < studentList.Count; i++){
+            answerList[i].text = "";
+            nameList[i].text = "";
+            nameList[i].gameObject.SetActive(false);
+            answerList[i].gameObject.SetActive(false);
+        }
+    }
+
+
+
 
     private void GetStudentList(){
         foreach (Player player in PhotonNetwork.PlayerList){
             if (player != PhotonNetwork.PlayerList[0]) {
-                studentList.Add(player);
+                Players p = new Players(player); 
+                studentList.Add(p);
             }
         }
     }
@@ -107,13 +136,27 @@ public class ProfExe : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Player otherPlayer) {
         if(!otherPlayer.IsMasterClient) {
-            studentList.Remove(otherPlayer);
+            ResetDisplay();
+            foreach (Players p in studentList){
+                if (p.player == otherPlayer)
+                    Debug.Log("yes");
+                    studentList.Remove(p);
+                    break;
+            }
             DisplayStudents();
         }
+    }
+
+    public override void OnPlayerEnteredRoom(Player otherPlayer){
+        ResetDisplay();
+        Players p = new Players(otherPlayer);
+        studentList.Add(p);
+        DisplayStudents();
     }
 
     public override void OnLeftRoom() {
         PhotonNetwork.LoadLevel("Menu");
     }
 
+}
 }
