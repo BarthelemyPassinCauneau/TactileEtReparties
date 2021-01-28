@@ -42,6 +42,15 @@ public class EleveExe : MonoBehaviourPun
         image.sprite = Resources.Load<Sprite>(imagePath);
     }
 
+    [PunRPC]
+    public void LeaveRoom() {
+        PhotonNetwork.LeaveRoom();
+    }
+
+    public void OnLeftRoom() {
+        PhotonNetwork.LoadLevel("Menu");
+    }
+
     public void ConfirmAnswer(){
         confirm.interactable = false;
         feedback.gameObject.SetActive(true);

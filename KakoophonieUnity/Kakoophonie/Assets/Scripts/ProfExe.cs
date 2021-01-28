@@ -6,7 +6,7 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class ProfExe : MonoBehaviourPun
+public class ProfExe : MonoBehaviourPunCallbacks
 {
     [SerializeField] TMP_Dropdown ChooseKey = null;
     [SerializeField] TMP_Dropdown ChooseNote = null;
@@ -98,6 +98,22 @@ public class ProfExe : MonoBehaviourPun
                 studentList.Add(player);
             }
         }
+    }
+
+    public void LeaveRoom() {
+        photonView.RPC("LeaveRoom", RpcTarget.Others);
+        PhotonNetwork.LeaveRoom();
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer) {
+        if(!otherPlayer.IsMasterClient) {
+            studentList.Remove(otherPlayer);
+            DisplayStudents();
+        }
+    }
+
+    public override void OnLeftRoom() {
+        PhotonNetwork.LoadLevel("Menu");
     }
 
 }
