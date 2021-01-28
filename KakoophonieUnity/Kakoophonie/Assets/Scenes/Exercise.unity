@@ -8315,6 +8315,7 @@ MonoBehaviour:
   image: {fileID: 1887497045}
   feedback: {fileID: 1769187166}
   confirm: {fileID: 1861034766}
+  title: {fileID: 969587752}
 --- !u!114 &2114337200
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8359,6 +8360,7 @@ MonoBehaviour:
   - {fileID: 1522866427}
   - {fileID: 447747625}
   - {fileID: 1108293449}
+  title: {fileID: 1611964416}
 --- !u!114 &2114337202
 MonoBehaviour:
   m_ObjectHideFlags: 0

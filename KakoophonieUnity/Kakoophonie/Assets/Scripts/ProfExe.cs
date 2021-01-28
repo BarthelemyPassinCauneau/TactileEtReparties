@@ -17,12 +17,14 @@ public class ProfExe : MonoBehaviourPunCallbacks
     [SerializeField] TMP_Text feedback = null;
     [SerializeField] List<TMP_Text> nameList = null;
     [SerializeField] List<TMP_Text> answerList = null;
+    [SerializeField] TMP_Text title = null;
     string imagePath = "";
     string correctAnswer = "";
     List<Players> studentList = new List<Players>();
 
     void Start()
     {
+        title.text = "Kakoophonie - Professeur "+ PhotonNetwork.NickName;
         InitDropdown();
         GetStudentList();
         DisplayStudents();
@@ -139,7 +141,6 @@ public class ProfExe : MonoBehaviourPunCallbacks
             ResetDisplay();
             foreach (Players p in studentList){
                 if (p.player == otherPlayer)
-                    Debug.Log("yes");
                     studentList.Remove(p);
                     break;
             }

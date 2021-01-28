@@ -12,12 +12,14 @@ public class EleveExe : MonoBehaviourPun
     [SerializeField] Image image = null;
     [SerializeField] TMP_Text feedback = null;
     [SerializeField] Button confirm = null;
+    [SerializeField] TMP_Text title = null;
     string imagePath = "";
     string correctAnswer = "";
 
     void Start()
     {
         InitDropdown();
+        title.text = "Kakoophonie - Eleve "+ PhotonNetwork.NickName;
         confirm.interactable = false;
     }
 
