@@ -7,11 +7,11 @@ using Photon.Pun;
 
 public class EleveExe : MonoBehaviourPun
 {
-    [SerializeField] TMP_Dropdown ChooseNote;
-    [SerializeField] TMP_Text LabelNote;
-    [SerializeField] Image image;
-    [SerializeField] TMP_Text feedback;
-    [SerializeField] Button confirm;
+    [SerializeField] TMP_Dropdown ChooseNote = null;
+    [SerializeField] TMP_Text LabelNote = null;
+    [SerializeField] Image image = null;
+    [SerializeField] TMP_Text feedback = null;
+    [SerializeField] Button confirm = null;
     string imagePath = "";
     string correctAnswer = "";
 

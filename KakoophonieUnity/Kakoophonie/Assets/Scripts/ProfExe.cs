@@ -8,14 +8,14 @@ using Photon.Realtime;
 
 public class ProfExe : MonoBehaviourPun
 {
-    [SerializeField] TMP_Dropdown ChooseKey;
-    [SerializeField] TMP_Dropdown ChooseNote;
-    [SerializeField] TMP_Text LabelKey;
-    [SerializeField] TMP_Text LabelNote;
-    [SerializeField] Image image;
-    [SerializeField] TMP_Text feedback;
-    [SerializeField] List<TMP_Text> nameList;
-    [SerializeField] List<TMP_Text> answerList;
+    [SerializeField] TMP_Dropdown ChooseKey = null;
+    [SerializeField] TMP_Dropdown ChooseNote = null;
+    [SerializeField] TMP_Text LabelKey = null;
+    [SerializeField] TMP_Text LabelNote = null;
+    [SerializeField] Image image = null;
+    [SerializeField] TMP_Text feedback = null;
+    [SerializeField] List<TMP_Text> nameList = null;
+    [SerializeField] List<TMP_Text> answerList = null;
     string imagePath = "";
     string correctAnswer = "";
     List<Player> studentList = new List<Player>();

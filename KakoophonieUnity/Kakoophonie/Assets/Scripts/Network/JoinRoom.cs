@@ -8,7 +8,6 @@ using TMPro;
 public class JoinRoom : MonoBehaviourPunCallbacks
 {
     [SerializeField] private TMP_InputField _name = null;
-    [SerializeField] private TMP_Text _textError = null;
 
     public void ButtonJoinRoom() {
         PhotonNetwork.NickName = _name.text;

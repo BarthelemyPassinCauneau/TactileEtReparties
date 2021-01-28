@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 public class RedirectStudents : MonoBehaviour
 {
-    [SerializeField] Canvas Professor;
-    [SerializeField] Canvas Student;
+    [SerializeField] Canvas Professor = null;
+    [SerializeField] Canvas Student = null;
     void Start()
     {
         if(!PhotonNetwork.IsMasterClient) {
