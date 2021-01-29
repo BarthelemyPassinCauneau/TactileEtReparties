@@ -121,28 +121,28 @@ public class ProfExe : MonoBehaviourPunCallbacks
                     if(p.player == current){
                         p.answer = answer;
                         if(currentGroup == 1){
-                        answerList[cpt].text = answer;
-                        if(answer == correctAnswer1){
-                                answerList[cpt].color = Color.green;
-                            } else {
-                                answerList[cpt].color = Color.yellow;
-                            }      
+                            answerList[cpt].text = answer;
+                            if(answer == correctAnswer1){
+                                    answerList[cpt].color = Color.green;
+                                } else {
+                                    answerList[cpt].color = Color.yellow;
+                                }   
+                            cpt++;    
                         }
                     }
-                    cpt++;
                 }
                 foreach (Players p in group2){
                     if(p.player == current){
                         p.answer = answer;
-                    }
-                    if(currentGroup == 2){
-                        answerList[cpt].text = answer;
-                        if(answer == correctAnswer2){
-                            answerList[cpt].color = Color.green;
-                        } else {
-                            answerList[cpt].color = Color.yellow;
+                        if(currentGroup == 2){
+                            answerList[cpt].text = answer;
+                            if(answer == correctAnswer2){
+                                answerList[cpt].color = Color.green;
+                            } else {
+                                answerList[cpt].color = Color.yellow;
+                            }
+                            cpt++;
                         }
-                        cpt++;
                     }
                 }
             }
