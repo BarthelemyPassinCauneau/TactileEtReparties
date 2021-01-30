@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Photon.Pun;
+using Photon.Voice.Unity; 
 
 public class EleveExe : MonoBehaviourPun
 {
@@ -13,6 +14,7 @@ public class EleveExe : MonoBehaviourPun
     [SerializeField] TMP_Text feedback = null;
     [SerializeField] Button confirm = null;
     [SerializeField] TMP_Text title = null;
+    [SerializeField] VoiceConnection voiceConnection = null;
     string imagePath = "";
     string correctAnswer = "";
 
@@ -66,5 +68,15 @@ public class EleveExe : MonoBehaviourPun
         }
         //Photon, send my answer to professor
         photonView.RPC("ReceiveAnswer", RpcTarget.MasterClient, ChooseNote.options[ChooseNote.value].text);
+    }
+
+    public void RaiseHand() {
+        photonView.RPC("StudentRaiseHand", RpcTarget.MasterClient, ChooseNote.options[ChooseNote.value].text);
+        voiceConnection.PrimaryRecorder.TransmitEnabled = false;
+    }
+
+    [PunRPC]
+    public void SpeakToClass() {
+        voiceConnection.PrimaryRecorder.TransmitEnabled = !voiceConnection.PrimaryRecorder.TransmitEnabled;
     }
 }

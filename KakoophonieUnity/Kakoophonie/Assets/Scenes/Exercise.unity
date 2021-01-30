@@ -1517,7 +1517,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 350698897}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2114337201}
+        m_TargetAssemblyTypeName: Exe.ProfExe, Assembly-CSharp
+        m_MethodName: SpeakToClass
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &350698897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9270,6 +9282,7 @@ MonoBehaviour:
   feedback: {fileID: 1769187166}
   confirm: {fileID: 1861034766}
   title: {fileID: 969587752}
+  voiceConnection: {fileID: 2114337204}
 --- !u!114 &2114337200
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9316,6 +9329,8 @@ MonoBehaviour:
   - {fileID: 1108293449}
   title: {fileID: 1611964416}
   group: {fileID: 310224135}
+  voiceConnection: {fileID: 2114337204}
+  speakButton: {fileID: 350698896}
 --- !u!114 &2114337202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9415,7 +9430,7 @@ MonoBehaviour:
   voiceDetection: 0
   voiceDetectionThreshold: 0.01
   voiceDetectionDelayMs: 500
-  unityMicrophoneDevice: 
+  unityMicrophoneDevice: Microphone sur casque (Arctis 7 Chat)
   photonMicrophoneDeviceId: 0
   interestGroup: 0
   debugEchoMode: 0
@@ -9461,7 +9476,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RandomRoom: 0
   autoConnect: 1
-  autoTransmit: 1
+  autoTransmit: 0
   publishUserId: 0
   RoomName: Room exercise
 --- !u!1 &2135179604
