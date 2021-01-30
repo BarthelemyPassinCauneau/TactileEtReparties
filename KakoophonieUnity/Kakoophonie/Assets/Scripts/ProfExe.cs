@@ -18,26 +18,21 @@ namespace Exe{
         [SerializeField] List<TMP_Text> nameList = null;
         [SerializeField] List<TMP_Text> answerList = null;
         [SerializeField] TMP_Text title = null;
-        [SerializeField] TMP_Text group = null;
+        [SerializeField] TMP_Text groupLabel = null;
         [SerializeField] VoiceConnection voiceConnection = null;
         [SerializeField] Button speakButton = null;
-        string imagePath1 = "";
-        string imagePath2 = "";
-        TMPro.TMP_Dropdown.OptionData key1 = null;
-        TMPro.TMP_Dropdown.OptionData note1 = null;
-        string correctAnswer1 = "Do";
-        string correctAnswer2 = "Do";
-        TMPro.TMP_Dropdown.OptionData key2 = null;
-        TMPro.TMP_Dropdown.OptionData note2 = null;
+        List<string> imagePath = new List<string>();
+        List<string> correctAnswer = new List<string>();
+        List<TMPro.TMP_Dropdown.OptionData> key = new List<TMP_Dropdown.OptionData>();
+        List<TMPro.TMP_Dropdown.OptionData> note = new List<TMP_Dropdown.OptionData>();
         List<string> selected = new List<string>();
-        List<Players> group1 = new List<Players>();
-        List<Players> group2 = new List<Players>();
-        int currentGroup = 1;
+        List<List<Players>> group = new List<List<Players>>();
+        int currentGroup = 0;
+        int groupCount = 2;
 
         void Start()
         {
-            title.text = "Kakoophonie - Professeur "+ PhotonNetwork.NickName;
-            group.text = "Groupe actuel : \nGroupe "+currentGroup;
+            InitComp();
             InitDropdown();
             GetStudentList();
             DisplayStudents();
@@ -45,18 +40,25 @@ namespace Exe{
 
         void Update()
         {
-            if(currentGroup == 1){
-                if ("Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text != imagePath1){
-                    imagePath1 = "Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text;
-                    image.sprite = Resources.Load<Sprite>(imagePath1);
-                    }
-            } else if (currentGroup == 2){
-                if ("Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text != imagePath2){
-                    imagePath2 = "Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text;
-                    image.sprite = Resources.Load<Sprite>(imagePath2);
-                }
+            if ("Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text != imagePath[currentGroup]){
+                imagePath[currentGroup] = "Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text;
+                image.sprite = Resources.Load<Sprite>(imagePath[currentGroup]);
             }
+        }
 
+        void InitComp(){
+            title.text = "Kakoophonie - Professeur "+ PhotonNetwork.NickName;
+            groupLabel.text = "Groupe actuel : \nGroupe "+(currentGroup+1);
+            for(int i = 0; i < groupCount; i++){
+                imagePath.Add("");
+                correctAnswer.Add("Do");
+                key.Add(null);
+                note.Add(null);
+                List<Players> lp = new List<Players>();
+                group.Add(lp);
+                ChooseKey.value = 0;
+                ChooseNote.value = 0;
+            }
         }
 
         void InitDropdown(){
@@ -82,25 +84,16 @@ namespace Exe{
             StartCoroutine(coroutine);
             feedback.color = Color.green;
             //Reset student answers
-            for(int i = 0; i < group1.Count; i++){
+            for(int i = 0; i < group[currentGroup].Count; i++){
                 answerList[i].text = "";
-                group1[i].answer = "";
+                group[currentGroup][i].answer = "";
             }
-            
             //Photon, send imagePath & correctAnswer to students
-            if(currentGroup == 1){
-                key1 = ChooseKey.options[ChooseKey.value];
-                note1 = ChooseNote.options[ChooseNote.value];
-                correctAnswer1 = ChooseNote.options[ChooseNote.value].text;
-                foreach(Players p in group1)
-                photonView.RPC("ReceiveExercise", p.player, key1.text, note1.text);
-            } else if (currentGroup == 2){
-                key2 = ChooseKey.options[ChooseKey.value];
-                note2 = ChooseNote.options[ChooseNote.value];
-                correctAnswer2 = ChooseNote.options[ChooseNote.value].text;
-                foreach(Players p in group2)
-                photonView.RPC("ReceiveExercise", p.player, key2.text, note2.text);
-            }
+            key[currentGroup] = ChooseKey.options[ChooseKey.value];
+            note[currentGroup] = ChooseNote.options[ChooseNote.value];
+            correctAnswer[currentGroup] = ChooseNote.options[ChooseNote.value].text;
+            foreach(Players p in group[currentGroup])
+                photonView.RPC("ReceiveExercise", p.player, key[currentGroup].text, note[currentGroup].text);
         }
 
         public IEnumerator WaitAndHide(float waitTime)
@@ -116,66 +109,43 @@ namespace Exe{
         }
 
         private void UpdateAnswer(Player current, string answer){
-            int cpt=0;
+            int cptP=0;
+            int cptL=0;
             foreach(Player player in PhotonNetwork.PlayerList){
                 if (player == current){
-                    foreach (Players p in group1){
-                        if(p.player == current){
-                            p.answer = answer;
-                            if(currentGroup == 1){
-                                answerList[cpt].text = answer;
-                                if(answer == correctAnswer1){
-                                        answerList[cpt].color = Color.green;
+                    foreach (List<Players> lp in group){
+                        foreach(Players p in lp){
+                            if(p.player == current){
+                                p.answer = answer;
+                                if(currentGroup == cptL){
+                                    answerList[cptP].text = answer;
+                                    if(answer == correctAnswer[currentGroup]){
+                                        answerList[cptP].color = Color.green;
                                     } else {
-                                        answerList[cpt].color = Color.yellow;
-                                    }   
-                                cpt++;    
-                            }
-                        }
-                    }
-                    foreach (Players p in group2){
-                        if(p.player == current){
-                            p.answer = answer;
-                            if(currentGroup == 2){
-                                answerList[cpt].text = answer;
-                                if(answer == correctAnswer2){
-                                    answerList[cpt].color = Color.green;
-                                } else {
-                                    answerList[cpt].color = Color.yellow;
+                                        answerList[cptP].color = Color.yellow;
+                                    }    
                                 }
-                                cpt++;
                             }
+                            cptP++;
                         }
+                        cptL++;
+                        cptP=0;
                     }
                 }
             }
         }
 
         private void DisplayStudents(){
-            if (currentGroup == 1){
-                for(int i = 0; i < group1.Count; i++){
-                    nameList[i].gameObject.SetActive(true);
-                    answerList[i].gameObject.SetActive(true);
-                    answerList[i].text = group1[i].answer;
-                    if(group1[i].answer == correctAnswer1){
-                        answerList[i].color = Color.green;
-                    } else {
-                        answerList[i].color = Color.yellow;
-                    }
-                    nameList[i].text = group1[i].player.NickName;
+            for(int i = 0; i < group[currentGroup].Count; i++){
+                nameList[i].gameObject.SetActive(true);
+                answerList[i].gameObject.SetActive(true);
+                answerList[i].text = group[currentGroup][i].answer;
+                if(group[currentGroup][i].answer == correctAnswer[currentGroup]){
+                    answerList[i].color = Color.green;
+                } else {
+                    answerList[i].color = Color.yellow;
                 }
-            } else if (currentGroup == 2) {
-                for(int i = 0; i < group2.Count; i++){
-                    nameList[i].gameObject.SetActive(true);
-                    answerList[i].gameObject.SetActive(true);
-                    answerList[i].text = group2[i].answer;
-                    if(group2[i].answer == correctAnswer2){
-                        answerList[i].color = Color.green;
-                    } else {
-                        answerList[i].color = Color.yellow;
-                    }
-                    nameList[i].text = group2[i].player.NickName;
-                }
+                nameList[i].text = group[currentGroup][i].player.NickName;
             }
         }
 
@@ -190,7 +160,7 @@ namespace Exe{
             foreach (Player player in PhotonNetwork.PlayerList){
                 if (player != PhotonNetwork.PlayerList[0]) {
                     Players p = new Players(player); 
-                    group1.Add(p);
+                    group[currentGroup].Add(p);
                 }
             }
         }
@@ -203,12 +173,12 @@ namespace Exe{
         public override void OnPlayerLeftRoom(Player otherPlayer) {
             if(!otherPlayer.IsMasterClient) {
                 ResetDisplay();
-                foreach (Players p in group1){
+                foreach (Players p in group[currentGroup]){
                     if (selected.Contains(p.player.NickName)){
                         selected.Remove(p.player.NickName);
                     }
                     if (p.player == otherPlayer)
-                        group1.Remove(p);
+                        group[currentGroup].Remove(p);
                         break;
                 }
                 DisplayStudents();
@@ -218,7 +188,7 @@ namespace Exe{
         public override void OnPlayerEnteredRoom(Player otherPlayer){
             ResetDisplay();
             Players p = new Players(otherPlayer);
-            group1.Add(p);
+            group[0].Add(p);
             DisplayStudents();
         }
 
@@ -237,30 +207,21 @@ namespace Exe{
         }
 
         public void TransferPlayers(){
-            if (currentGroup == 1){
-                foreach (Players p in group1){
-                    if (selected.Contains(p.player.NickName)){
-                        group2.Add(p);
-                        selected.Remove(p.player.NickName);
-                    }
+            int newG = 0;
+            if (currentGroup == 0){ 
+                newG = 1;
+            }  else {
+                newG = 0;
+            }
+            foreach (Players p in group[currentGroup]){
+                if (selected.Contains(p.player.NickName)){
+                    group[newG].Add(p);
+                    selected.Remove(p.player.NickName);
                 }
-                foreach (Players p in group2){
-                    if (group1.Contains(p)){
-                        group1.Remove(p);
-                    }
-                }
-
-            } else if (currentGroup == 2){
-                foreach (Players p in group2){
-                    if (selected.Contains(p.player.NickName)){
-                        group1.Add(p);
-                        selected.Remove(p.player.NickName);
-                    }
-                } 
-                foreach (Players p in group1){
-                    if (group2.Contains(p)){
-                        group2.Remove(p);
-                    }
+            }
+            foreach (Players p in group[newG]){
+                if (group[currentGroup].Contains(p)){
+                    group[currentGroup].Remove(p);
                 }
             }
             foreach(TMP_Text t in nameList){
@@ -270,23 +231,17 @@ namespace Exe{
             DisplayStudents();
         }
 
-        public void ChangeGroup(){
-            ResetDisplay();
-            if (currentGroup == 1) {
-                if(imagePath2 != ""){
-                    ChooseKey.options[ChooseKey.value] = key2;
-                    ChooseNote.options[ChooseNote.value] = note2;
-                    image.sprite = Resources.Load<Sprite>(imagePath2);
+        public void ChangeGroup(int direction){
+            int newG = currentGroup + direction;
+            if (newG < groupCount && newG >= 0){
+                ResetDisplay();
+                if(imagePath[newG] != "" && key[newG] != null && note[newG] != null){
+                    image.sprite = Resources.Load<Sprite>(imagePath[newG]);
                 }
-                currentGroup++;
-            } else {
-                ChooseKey.options[ChooseKey.value] = key1;
-                ChooseNote.options[ChooseNote.value] = note1;
-                image.sprite = Resources.Load<Sprite>(imagePath1);
-                currentGroup--;
+                currentGroup = newG;
+                DisplayStudents();
+                groupLabel.text = "Groupe actuel : \nGroupe "+(currentGroup+1);
             }
-            DisplayStudents();   
-            group.text = "Groupe actuel : \nGroupe "+currentGroup;
         }
 
         public void SpeakToClass() {
