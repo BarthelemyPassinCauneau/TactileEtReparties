@@ -462,11 +462,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65b99afb3758e9e4689c28a18224eb8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RandomRoom: 1
+  RandomRoom: 0
   autoConnect: 1
   autoTransmit: 1
   publishUserId: 0
-  RoomName: 
+  RoomName: Test
 --- !u!114 &1334580853
 MonoBehaviour:
   m_ObjectHideFlags: 0

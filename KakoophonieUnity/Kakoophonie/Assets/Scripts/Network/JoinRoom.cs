@@ -11,7 +11,7 @@ public class JoinRoom : MonoBehaviourPunCallbacks
 
     public void ButtonJoinRoom() {
         PhotonNetwork.NickName = _name.text;
-        PhotonNetwork.JoinRoom("Room test");
+        PhotonNetwork.JoinRoom("Room exercise");
     }
 
     //OnJoinedRoom implementé dans CreateRoom.cs

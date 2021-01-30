@@ -13,7 +13,7 @@ public class CreateRoom : MonoBehaviourPunCallbacks
 
     public void ButtonCreateRoom() {
         PhotonNetwork.NickName = _name.text;
-        PhotonNetwork.CreateRoom("Room test", new RoomOptions(), TypedLobby.Default);
+        PhotonNetwork.CreateRoom("Room exercise", new RoomOptions(), TypedLobby.Default);
     }
 
     public override void OnJoinedRoom() {
