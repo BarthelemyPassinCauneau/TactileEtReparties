@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -11,13 +12,15 @@ namespace Exe{
         [SerializeField] private PlayerItem _participantItem = null;
         [SerializeField] private Transform _content = null;
         public List<Players> playerList = new List<Players>();
-        public List<PlayerItem> PlayerItemList = new List<PlayerItem>();
+        public Dictionary<Players, PlayerItem> PlayerItemList = new Dictionary<Players, PlayerItem>();
+        public UnmuteStudentEvent UnmuteStudentEvent = new UnmuteStudentEvent();
 
         public void CreateList(){
             foreach(Players p in playerList){
                 PlayerItem PI = Instantiate(_participantItem, _content);
-                PI.SetPlayerInfo(p.player.NickName, p.answer);
-                PlayerItemList.Add(PI);
+                PI.SetPlayerInfo(p);
+                PI.HandClickedEvent.AddListener(OnClickHand);
+                PlayerItemList[p] = (PI);
             }
         }
         public void PlayerEnteredRoom()
@@ -25,47 +28,48 @@ namespace Exe{
             //List updated was received before this function
             Players p = playerList[playerList.Count-1];
             PlayerItem PI = Instantiate(_participantItem, _content);            
-            PI.SetPlayerInfo(p.player.NickName, p.answer);
-            PlayerItemList.Add(PI);
+            PI.SetPlayerInfo(p);
+            PlayerItemList[p] = PI;
         }
         public void PlayerLeftRoom(Players p)
         {
-            foreach(PlayerItem PI in PlayerItemList){
-                if(PI.name == p.player.NickName){
-                    Destroy(PI.gameObject);
-                    PlayerItemList.Remove(PI);
-                }
-            }
+            Destroy(PlayerItemList[p]);
+            PlayerItemList.Remove(p);
         }
         public void ResetList(){
-            foreach(PlayerItem PI in PlayerItemList){
+            foreach(PlayerItem PI in PlayerItemList.Values){
                 Destroy(PI.gameObject);
             }
-            PlayerItemList = new List<PlayerItem>();
+            PlayerItemList.Clear();
         }
         public void ApplyAnswerColor(Players p, Color c){
-            foreach(PlayerItem PI in PlayerItemList){
-                if(PI.name == p.player.NickName){
-                    PI._answer.color = c;
-                }
-            }
+            PlayerItemList[p]._answer.color = c;
         }
         public void ResetAnswerColor(){
-            foreach(PlayerItem PI in PlayerItemList){
+            foreach(PlayerItem PI in PlayerItemList.Values){
                 PI.image.color = Color.black;
             }
         }
         public void ApplySelectColor(Players p){
-            foreach(PlayerItem PI in PlayerItemList){
-                if(PI.name == p.player.NickName){
-                    PI.image.color = Color.blue;
-                }
-            }
+            PlayerItemList[p]._answer.color = Color.blue;
         }
         public void ResetSelectColor(){
-            foreach(PlayerItem PI in PlayerItemList){
+            foreach(PlayerItem PI in PlayerItemList.Values){
                 PI.image.color = Color.gray;
             }
         }
+
+        public void RaiseHand(Player player) {
+            foreach(Players p in playerList){
+                if(player == p.player) {
+                    PlayerItemList[p].RaiseHand();
+                }
+            }
+        }
+
+        public void OnClickHand(Player p) {
+            UnmuteStudentEvent.Invoke(p);
+        }
     }
 }
+public class UnmuteStudentEvent : UnityEvent<Player> {}

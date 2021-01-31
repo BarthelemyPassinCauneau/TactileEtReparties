@@ -7,13 +7,13 @@ using Photon.Pun;
 using Photon.Realtime;
 
 namespace Exe{
-public class Players {
-    public Player player;
-    public string answer;
+    public class Players {
+        public Player player;
+        public string answer;
 
-    public Players(Player player) {
-        this.player = player;
-        this.answer = "";
+        public Players(Player player) {
+            this.player = player;
+            this.answer = "";
+        }
     }
-}
 }

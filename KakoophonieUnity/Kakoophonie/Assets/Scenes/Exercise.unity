@@ -1369,7 +1369,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _participantItem: {fileID: -6694566073753275352, guid: ed138c7dad2b8144fb58440a0e90fa0b, type: 3}
   _content: {fileID: 1871799730}
-  PlayerItemList: []
 --- !u!114 &296850138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6915,7 +6914,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1403515926}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2114337199}
+        m_TargetAssemblyTypeName: EleveExe, Assembly-CSharp
+        m_MethodName: RaiseHand
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1403515926
 MonoBehaviour:
   m_ObjectHideFlags: 0

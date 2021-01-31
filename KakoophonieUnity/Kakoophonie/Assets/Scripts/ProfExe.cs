@@ -38,6 +38,7 @@ namespace Exe{
             GetStudentList();
             DisplayStudents();
             playerList.playerList = group[currentGroup];
+            playerList.UnmuteStudentEvent.AddListener(SpeakToClass);
             playerList.CreateList();
         }
 
@@ -189,6 +190,7 @@ namespace Exe{
                     }
                     if (p.player == otherPlayer)
                         group[currentGroup].Remove(p);
+                        playerList.PlayerLeftRoom(p);
                         break;
                 }
                 DisplayStudents();
@@ -261,7 +263,11 @@ namespace Exe{
 
         [PunRPC] 
         public void StudentRaiseHand(PhotonMessageInfo info) {
-            // Afficher le bouton
+            playerList.RaiseHand(info.Sender);
+        }
+
+        public void SpeakToClass(Player p) {
+            photonView.RPC("SpeakToClass", p);
         }
     }
 }

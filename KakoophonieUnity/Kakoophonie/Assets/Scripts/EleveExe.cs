@@ -71,7 +71,7 @@ public class EleveExe : MonoBehaviourPun
     }
 
     public void RaiseHand() {
-        photonView.RPC("StudentRaiseHand", RpcTarget.MasterClient, ChooseNote.options[ChooseNote.value].text);
+        photonView.RPC("StudentRaiseHand", RpcTarget.MasterClient);
         voiceConnection.PrimaryRecorder.TransmitEnabled = false;
     }
 
