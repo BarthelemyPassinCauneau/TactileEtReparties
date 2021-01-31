@@ -21,6 +21,7 @@ namespace Exe{
         [SerializeField] TMP_Text groupLabel = null;
         [SerializeField] VoiceConnection voiceConnection = null;
         [SerializeField] Button speakButton = null;
+        [SerializeField] PlayerList playerList = null;
         List<string> imagePath = new List<string>();
         List<string> correctAnswer = new List<string>();
         List<TMPro.TMP_Dropdown.OptionData> key = new List<TMP_Dropdown.OptionData>();
@@ -36,6 +37,8 @@ namespace Exe{
             InitDropdown();
             GetStudentList();
             DisplayStudents();
+            playerList.playerList = group[currentGroup];
+            playerList.CreateList();
         }
 
         void Update()
@@ -75,6 +78,12 @@ namespace Exe{
             ChooseNote.options.Add (new TMP_Dropdown.OptionData() {text="Si"});
             LabelKey.text = ChooseKey.options[0].text;
             LabelNote.text = ChooseNote.options[0].text;
+        }
+
+        void UpdateList(){
+            playerList.ResetList();
+            playerList.playerList = group[currentGroup];
+            playerList.CreateList();
         }
 
         public void SendExercise(){
@@ -133,6 +142,7 @@ namespace Exe{
                     }
                 }
             }
+            UpdateList();
         }
 
         private void DisplayStudents(){

@@ -17,15 +17,16 @@ namespace Exe{
             foreach(Players p in playerList){
                 PlayerItem PI = Instantiate(_participantItem, _content);
                 PI.SetPlayerInfo(p.player.NickName, p.answer);
+                PlayerItemList.Add(PI);
             }
         }
         public void PlayerEnteredRoom()
         {
             //List updated was received before this function
             Players p = playerList[playerList.Count-1];
-            PlayerItem PI = Instantiate(_participantItem, _content);
-            PlayerItemList.Add(PI);
+            PlayerItem PI = Instantiate(_participantItem, _content);            
             PI.SetPlayerInfo(p.player.NickName, p.answer);
+            PlayerItemList.Add(PI);
         }
         public void PlayerLeftRoom(Players p)
         {
@@ -39,8 +40,8 @@ namespace Exe{
         public void ResetList(){
             foreach(PlayerItem PI in PlayerItemList){
                 Destroy(PI.gameObject);
-                PlayerItemList.Remove(PI);
             }
+            PlayerItemList = new List<PlayerItem>();
         }
         public void ApplyAnswerColor(Players p, Color c){
             foreach(PlayerItem PI in PlayerItemList){
