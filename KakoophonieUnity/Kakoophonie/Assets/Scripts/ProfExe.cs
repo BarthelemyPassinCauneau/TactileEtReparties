@@ -43,10 +43,10 @@ namespace Exe{
             InitComp();
             InitDropdown();
             GetStudentList();
-            DisplayStudents();
             playerList.playerList = group[currentGroup];
             playerList.UnmuteStudentEvent.AddListener(SpeakToClass);
             playerList.CreateList();
+            DisplayStudents();
         }
 
         void Update()
@@ -116,11 +116,13 @@ namespace Exe{
                 answerList[i].text = "";
                 group[currentGroup][i].answer = "";
             }
+            playerList.ResetAnswerColor();
             //Reset answers count
             for(int i = 0; i < groupCount; i++){
                 groupRight[i] = 0;
                 groupWrong[i] = 0;
             }
+            UpdateList();
             DisplayGroupList();
             //Photon, send imagePath & correctAnswer to students
             key[currentGroup] = ChooseKey.options[ChooseKey.value];
@@ -155,8 +157,10 @@ namespace Exe{
                                     answerList[cptP].text = answer;
                                     if(answer == correctAnswer[currentGroup]){
                                         answerList[cptP].color = Color.green;
+                                        playerList.ApplyAnswerColor(p, Color.green);
                                     } else {
                                         answerList[cptP].color = Color.yellow;
+                                        playerList.ApplyAnswerColor(p, Color.red);
                                     }    
                                 }
                             }
@@ -172,8 +176,10 @@ namespace Exe{
                     }
                 }
             }
-            DisplayGroupList();
+            ResetDisplay();
             UpdateList();
+            DisplayStudents();
+            DisplayGroupList();
         }
 
         private void DisplayStudents(){
@@ -183,8 +189,10 @@ namespace Exe{
                 answerList[i].text = group[currentGroup][i].answer;
                 if(group[currentGroup][i].answer == correctAnswer[currentGroup]){
                     answerList[i].color = Color.green;
+                    playerList.ApplyAnswerColor(group[currentGroup][i], Color.green);
                 } else {
                     answerList[i].color = Color.yellow;
+                    playerList.ApplyAnswerColor(group[currentGroup][i], Color.red);
                 }
                 nameList[i].text = group[currentGroup][i].player.NickName;
             }
@@ -215,15 +223,18 @@ namespace Exe{
         public override void OnPlayerLeftRoom(Player otherPlayer) {
             if(!otherPlayer.IsMasterClient) {
                 ResetDisplay();
-                foreach (Players p in group[currentGroup]){
-                    if (selected.Contains(p.player.NickName)){
-                        selected.Remove(p.player.NickName);
+                foreach(List<Players> lp in group){
+                    foreach (Players p in lp){
+                        if (selected.Contains(p.player.NickName)){
+                            selected.Remove(p.player.NickName);
+                        }
+                        if (p.player == otherPlayer)
+                            group[currentGroup].Remove(p);
+                            playerList.PlayerLeftRoom(p);
+                            break;
                     }
-                    if (p.player == otherPlayer)
-                        group[currentGroup].Remove(p);
-                        playerList.PlayerLeftRoom(p);
-                        break;
                 }
+                UpdateList();
                 DisplayGroupList();
                 DisplayStudents();
             }
@@ -233,6 +244,7 @@ namespace Exe{
             ResetDisplay();
             Players p = new Players(otherPlayer);
             group[0].Add(p);
+            UpdateList();
             DisplayGroupList();
             DisplayStudents();
         }
@@ -272,6 +284,7 @@ namespace Exe{
             foreach(TMP_Text t in nameList){
                 t.color = Color.white;
             }
+            UpdateList();
             DisplayGroupList();
             ResetDisplay();
             DisplayStudents();
@@ -285,6 +298,7 @@ namespace Exe{
                     image.sprite = Resources.Load<Sprite>(imagePath[newG]);
                 }
                 currentGroup = newG;
+                UpdateList();
                 DisplayStudents();
                 groupLabel.text = "Groupe actuel : \nGroupe "+(currentGroup+1);
             }

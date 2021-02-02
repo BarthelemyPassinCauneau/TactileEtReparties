@@ -33,7 +33,7 @@ namespace Exe{
         }
         public void PlayerLeftRoom(Players p)
         {
-            Destroy(PlayerItemList[p]);
+            Destroy(PlayerItemList[p].gameObject);
             PlayerItemList.Remove(p);
         }
         public void ResetList(){
