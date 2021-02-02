@@ -28,8 +28,15 @@ namespace Exe{
         List<TMPro.TMP_Dropdown.OptionData> note = new List<TMP_Dropdown.OptionData>();
         List<string> selected = new List<string>();
         List<List<Players>> group = new List<List<Players>>();
+        List<int> groupWrong = new List<int>();
+        List<int> groupRight = new List<int>();
         int currentGroup = 0;
         int groupCount = 2;
+
+        //TO Change into ListView
+        [SerializeField] List<TMP_Text> wrong;
+        [SerializeField] List<TMP_Text> correct;
+        [SerializeField] List<TMP_Text> count;
 
         void Start()
         {
@@ -48,6 +55,7 @@ namespace Exe{
                 imagePath[currentGroup] = "Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text;
                 image.sprite = Resources.Load<Sprite>(imagePath[currentGroup]);
             }
+            DisplayGroupList();
         }
 
         void InitComp(){
@@ -60,6 +68,8 @@ namespace Exe{
                 note.Add(null);
                 List<Players> lp = new List<Players>();
                 group.Add(lp);
+                groupWrong.Add(0);
+                groupRight.Add(0);
                 ChooseKey.value = 0;
                 ChooseNote.value = 0;
             }
@@ -87,6 +97,15 @@ namespace Exe{
             playerList.CreateList();
         }
 
+        void DisplayGroupList(){
+            //TO Change into ListView
+            for (int i = 0; i < groupCount; i++){
+                wrong[i].text = groupWrong[i].ToString();
+                correct[i].text = groupRight[i].ToString();
+                count[i].text = group[i].Count.ToString();
+            }
+        }
+
         public void SendExercise(){
             IEnumerator coroutine;
             feedback.text = "Exercice envoyé";
@@ -97,6 +116,11 @@ namespace Exe{
             for(int i = 0; i < group[currentGroup].Count; i++){
                 answerList[i].text = "";
                 group[currentGroup][i].answer = "";
+            }
+            //Reset answers count
+            for(int i = 0; i < groupCount; i++){
+                groupRight[i] = 0;
+                groupWrong[i] = 0;
             }
             //Photon, send imagePath & correctAnswer to students
             key[currentGroup] = ChooseKey.options[ChooseKey.value];
@@ -136,6 +160,11 @@ namespace Exe{
                                     }    
                                 }
                             }
+                            if(answer == correctAnswer[cptP]){
+                                groupRight[cptP]++;
+                            } else {
+                                groupWrong[cptP]++;
+                            }  
                             cptP++;
                         }
                         cptL++;
