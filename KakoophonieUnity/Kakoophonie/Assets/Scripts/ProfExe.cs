@@ -55,7 +55,6 @@ namespace Exe{
                 imagePath[currentGroup] = "Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text;
                 image.sprite = Resources.Load<Sprite>(imagePath[currentGroup]);
             }
-            DisplayGroupList();
         }
 
         void InitComp(){
@@ -122,6 +121,7 @@ namespace Exe{
                 groupRight[i] = 0;
                 groupWrong[i] = 0;
             }
+            DisplayGroupList();
             //Photon, send imagePath & correctAnswer to students
             key[currentGroup] = ChooseKey.options[ChooseKey.value];
             note[currentGroup] = ChooseNote.options[ChooseNote.value];
@@ -160,10 +160,10 @@ namespace Exe{
                                     }    
                                 }
                             }
-                            if(answer == correctAnswer[cptP]){
-                                groupRight[cptP]++;
+                            if(answer == correctAnswer[cptL]){
+                                groupRight[cptL]++;
                             } else {
-                                groupWrong[cptP]++;
+                                groupWrong[cptL]++;
                             }  
                             cptP++;
                         }
@@ -172,6 +172,7 @@ namespace Exe{
                     }
                 }
             }
+            DisplayGroupList();
             UpdateList();
         }
 
@@ -203,6 +204,7 @@ namespace Exe{
                     group[currentGroup].Add(p);
                 }
             }
+            DisplayGroupList();
         }
 
         public void LeaveRoom() {
@@ -222,6 +224,7 @@ namespace Exe{
                         playerList.PlayerLeftRoom(p);
                         break;
                 }
+                DisplayGroupList();
                 DisplayStudents();
             }
         }
@@ -230,6 +233,7 @@ namespace Exe{
             ResetDisplay();
             Players p = new Players(otherPlayer);
             group[0].Add(p);
+            DisplayGroupList();
             DisplayStudents();
         }
 
@@ -268,6 +272,7 @@ namespace Exe{
             foreach(TMP_Text t in nameList){
                 t.color = Color.white;
             }
+            DisplayGroupList();
             ResetDisplay();
             DisplayStudents();
         }
