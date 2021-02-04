@@ -15,8 +15,10 @@ public class EleveExe : MonoBehaviourPun
     [SerializeField] Button confirm = null;
     [SerializeField] TMP_Text title = null;
     [SerializeField] VoiceConnection voiceConnection = null;
+    [SerializeField] Button speakButton = null;
     string imagePath = "";
     string correctAnswer = "";
+    bool handRaised = false;
 
     void Start()
     {
@@ -72,11 +74,15 @@ public class EleveExe : MonoBehaviourPun
 
     public void RaiseHand() {
         photonView.RPC("StudentRaiseHand", RpcTarget.MasterClient);
+        handRaised = !handRaised;
+        speakButton.image.color = handRaised? new Color(1.0f, 0.64f, 0.0f) : new Color(255, 255, 255);
         voiceConnection.PrimaryRecorder.TransmitEnabled = false;
     }
 
     [PunRPC]
     public void SpeakToClass() {
         voiceConnection.PrimaryRecorder.TransmitEnabled = !voiceConnection.PrimaryRecorder.TransmitEnabled;
+        speakButton.image.color = voiceConnection.PrimaryRecorder.TransmitEnabled? new Color(0, 255, 0) : new Color(255, 255, 255);
+        handRaised = voiceConnection.PrimaryRecorder.TransmitEnabled;
     }
 }

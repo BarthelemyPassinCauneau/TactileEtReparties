@@ -9407,6 +9407,7 @@ MonoBehaviour:
   confirm: {fileID: 1861034766}
   title: {fileID: 969587752}
   voiceConnection: {fileID: 2114337204}
+  speakButton: {fileID: 1403515925}
 --- !u!114 &2114337200
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9551,7 +9552,7 @@ MonoBehaviour:
   voiceDetection: 0
   voiceDetectionThreshold: 0.01
   voiceDetectionDelayMs: 500
-  unityMicrophoneDevice: Microphone (USB Camera-B4.09.24.1)
+  unityMicrophoneDevice: Microphone sur casque (2- Arctis 7 Chat)
   photonMicrophoneDeviceId: 0
   interestGroup: 0
   debugEchoMode: 0
