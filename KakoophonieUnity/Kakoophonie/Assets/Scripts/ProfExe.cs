@@ -15,8 +15,6 @@ namespace Exe{
         [SerializeField] TMP_Text LabelNote = null;
         [SerializeField] Image image = null;
         [SerializeField] TMP_Text feedback = null;
-        [SerializeField] List<TMP_Text> nameList = null;
-        [SerializeField] List<TMP_Text> answerList = null;
         [SerializeField] TMP_Text title = null;
         [SerializeField] TMP_Text groupLabel = null;
         [SerializeField] VoiceConnection voiceConnection = null;
@@ -26,7 +24,7 @@ namespace Exe{
         List<string> correctAnswer = new List<string>();
         List<TMPro.TMP_Dropdown.OptionData> key = new List<TMP_Dropdown.OptionData>();
         List<TMPro.TMP_Dropdown.OptionData> note = new List<TMP_Dropdown.OptionData>();
-        List<string> selected = new List<string>();
+        public List<string> selected = new List<string>();
         List<List<Players>> group = new List<List<Players>>();
         List<int> groupWrong = new List<int>();
         List<int> groupRight = new List<int>();
@@ -113,7 +111,6 @@ namespace Exe{
             feedback.color = Color.green;
             //Reset student answers
             for(int i = 0; i < group[currentGroup].Count; i++){
-                answerList[i].text = "";
                 group[currentGroup][i].answer = "";
             }
             playerList.ResetAnswerColor();
@@ -154,12 +151,9 @@ namespace Exe{
                             if(p.player == current){
                                 p.answer = answer;
                                 if(currentGroup == cptL){
-                                    answerList[cptP].text = answer;
                                     if(answer == correctAnswer[currentGroup]){
-                                        answerList[cptP].color = Color.green;
                                         playerList.ApplyAnswerColor(p, Color.green);
                                     } else {
-                                        answerList[cptP].color = Color.yellow;
                                         playerList.ApplyAnswerColor(p, Color.red);
                                     }    
                                 }
@@ -176,7 +170,6 @@ namespace Exe{
                     }
                 }
             }
-            ResetDisplay();
             UpdateList();
             DisplayStudents();
             DisplayGroupList();
@@ -184,24 +177,11 @@ namespace Exe{
 
         private void DisplayStudents(){
             for(int i = 0; i < group[currentGroup].Count; i++){
-                nameList[i].gameObject.SetActive(true);
-                answerList[i].gameObject.SetActive(true);
-                answerList[i].text = group[currentGroup][i].answer;
                 if(group[currentGroup][i].answer == correctAnswer[currentGroup]){
-                    answerList[i].color = Color.green;
                     playerList.ApplyAnswerColor(group[currentGroup][i], Color.green);
                 } else {
-                    answerList[i].color = Color.yellow;
                     playerList.ApplyAnswerColor(group[currentGroup][i], Color.red);
                 }
-                nameList[i].text = group[currentGroup][i].player.NickName;
-            }
-        }
-
-        private void ResetDisplay(){
-            for(int i = 0; i < 6; i++){
-                answerList[i].text = "";
-                nameList[i].text = "";
             }
         }
 
@@ -222,7 +202,6 @@ namespace Exe{
 
         public override void OnPlayerLeftRoom(Player otherPlayer) {
             if(!otherPlayer.IsMasterClient) {
-                ResetDisplay();
                 foreach(List<Players> lp in group){
                     foreach (Players p in lp){
                         if (selected.Contains(p.player.NickName)){
@@ -241,7 +220,6 @@ namespace Exe{
         }
 
         public override void OnPlayerEnteredRoom(Player otherPlayer){
-            ResetDisplay();
             Players p = new Players(otherPlayer);
             group[0].Add(p);
             UpdateList();
@@ -281,19 +259,14 @@ namespace Exe{
                     group[currentGroup].Remove(p);
                 }
             }
-            foreach(TMP_Text t in nameList){
-                t.color = Color.white;
-            }
             UpdateList();
             DisplayGroupList();
-            ResetDisplay();
             DisplayStudents();
         }
 
         public void ChangeGroup(int direction){
             int newG = currentGroup + direction;
             if (newG < groupCount && newG >= 0){
-                ResetDisplay();
                 if(imagePath[newG] != "" && key[newG] != null && note[newG] != null){
                     image.sprite = Resources.Load<Sprite>(imagePath[newG]);
                 }
