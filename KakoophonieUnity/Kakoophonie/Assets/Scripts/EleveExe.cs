@@ -85,4 +85,17 @@ public class EleveExe : MonoBehaviourPun
         speakButton.image.color = voiceConnection.PrimaryRecorder.TransmitEnabled? new Color(0, 255, 0) : new Color(255, 255, 255);
         handRaised = voiceConnection.PrimaryRecorder.TransmitEnabled;
     }
+
+    [PunRPC]
+    public void Mute() {
+        voiceConnection.PrimaryRecorder.TransmitEnabled = false;
+        speakButton.image.color = new Color(255, 255, 255);
+        handRaised = false;
+    }
+
+    [PunRPC]
+    public void ChangeGroup(byte g) {
+        voiceConnection.Client.ChangeAudioGroups(new byte[0], new byte[1] { g });
+        voiceConnection.PrimaryRecorder.AudioGroup = g;
+    }
 }

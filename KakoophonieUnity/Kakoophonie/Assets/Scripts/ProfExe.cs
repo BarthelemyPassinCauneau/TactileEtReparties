@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -131,8 +132,11 @@ namespace Exe{
             key[currentGroup] = ChooseKey.options[ChooseKey.value];
             note[currentGroup] = ChooseNote.options[ChooseNote.value];
             correctAnswer[currentGroup] = ChooseNote.options[ChooseNote.value].text;
-            foreach(Players p in group[currentGroup])
+            foreach(Players p in group[currentGroup]) {
                 photonView.RPC("ReceiveExercise", p.player, key[currentGroup].text, note[currentGroup].text);
+                photonView.RPC("ChangeGroup", p.player, Convert.ToByte(currentGroup+1));
+            }
+            SwitchVocal(Convert.ToByte(currentGroup+1));
         }
 
         public IEnumerator WaitAndHide(float waitTime)
@@ -180,6 +184,11 @@ namespace Exe{
             UpdateList();
             DisplayStudents();
             DisplayGroupList();
+        }
+
+        private void SwitchVocal(byte group) {
+            voiceConnection.Client.ChangeAudioGroups(new byte[0], new byte[1] { group });
+            voiceConnection.PrimaryRecorder.AudioGroup = group;
         }
 
         private void DisplayStudents(){
@@ -254,6 +263,7 @@ namespace Exe{
                 }
             }
             foreach (Players p in group[newG]){
+                photonView.RPC("ChangeGroup", p.player, Convert.ToByte(newG+1));
                 if (group[currentGroup].Contains(p)){
                     group[currentGroup].Remove(p);
                 }
@@ -266,6 +276,9 @@ namespace Exe{
         public void ChangeGroup(int direction){
             int newG = currentGroup + direction;
             if (newG < groupCount && newG >= 0){
+                foreach (Players p in group[currentGroup]){
+                    photonView.RPC("Mute", p.player);
+                }
                 if(imagePath[newG] != "" && key[newG] != null && note[newG] != null){
                     image.sprite = Resources.Load<Sprite>(imagePath[newG]);
                 }
@@ -273,6 +286,7 @@ namespace Exe{
                 UpdateList();
                 DisplayStudents();
                 groupLabel.text = "Groupe actuel : \nGroupe "+(currentGroup+1);
+                SwitchVocal(Convert.ToByte(newG+1));
             }
         }
 
