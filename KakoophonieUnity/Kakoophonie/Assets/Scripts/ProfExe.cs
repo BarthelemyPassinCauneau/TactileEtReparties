@@ -45,14 +45,18 @@ namespace Exe{
             playerList.UnmuteStudentEvent.AddListener(SpeakToClass);
             playerList.CreateList();
             DisplayStudents();
+            ChooseKey.onValueChanged.AddListener(delegate {
+                DropdownValueChanged(ChooseKey.GetComponent<Dropdown>());
+            });
+            ChooseNote.onValueChanged.AddListener(delegate {
+                DropdownValueChanged(ChooseNote.GetComponent<Dropdown>());
+            });
+            image.sprite = Resources.Load<Sprite>("Images/Sol/Do");
         }
 
-        void Update()
-        {
-            if ("Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text != imagePath[currentGroup]){
-                imagePath[currentGroup] = "Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text;
-                image.sprite = Resources.Load<Sprite>(imagePath[currentGroup]);
-            }
+        void DropdownValueChanged(Dropdown dd){
+            imagePath[currentGroup] = "Images/"+ChooseKey.options[ChooseKey.value].text+"/"+ChooseNote.options[ChooseNote.value].text;
+            image.sprite = Resources.Load<Sprite>(imagePath[currentGroup]);
         }
 
         void InitComp(){
@@ -157,12 +161,13 @@ namespace Exe{
                                         playerList.ApplyAnswerColor(p, Color.red);
                                     }    
                                 }
+                                if(answer == correctAnswer[cptL]){
+                                    groupRight[cptL]++;
+                                } else {
+                                    groupWrong[cptL]++;
+                                }  
                             }
-                            if(answer == correctAnswer[cptL]){
-                                groupRight[cptL]++;
-                            } else {
-                                groupWrong[cptL]++;
-                            }  
+
                             cptP++;
                         }
                         cptL++;
@@ -201,6 +206,7 @@ namespace Exe{
         }
 
         public override void OnPlayerLeftRoom(Player otherPlayer) {
+            int cptLP = 0;
             if(!otherPlayer.IsMasterClient) {
                 foreach(List<Players> lp in group){
                     foreach (Players p in lp){
@@ -208,10 +214,11 @@ namespace Exe{
                             selected.Remove(p.player.NickName);
                         }
                         if (p.player == otherPlayer)
-                            group[currentGroup].Remove(p);
+                            group[cptLP].Remove(p);
                             playerList.PlayerLeftRoom(p);
                             break;
                     }
+                    cptLP++;
                 }
                 UpdateList();
                 DisplayGroupList();
