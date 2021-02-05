@@ -76,6 +76,7 @@ public class EleveExe : MonoBehaviourPun
         photonView.RPC("StudentRaiseHand", RpcTarget.MasterClient);
         handRaised = !handRaised;
         speakButton.image.color = handRaised? new Color(1.0f, 0.64f, 0.0f) : new Color(255, 255, 255);
+        speakButton.GetComponentInChildren<TMP_Text>().text = handRaised? "Main levée" : "Lever la main";
         voiceConnection.PrimaryRecorder.TransmitEnabled = false;
     }
 
@@ -83,6 +84,7 @@ public class EleveExe : MonoBehaviourPun
     public void SpeakToClass() {
         voiceConnection.PrimaryRecorder.TransmitEnabled = !voiceConnection.PrimaryRecorder.TransmitEnabled;
         speakButton.image.color = voiceConnection.PrimaryRecorder.TransmitEnabled? new Color(0, 255, 0) : new Color(255, 255, 255);
+        speakButton.GetComponentInChildren<TMP_Text>().text = voiceConnection.PrimaryRecorder.TransmitEnabled? "Vous avez la parole" : "Lever la main";
         handRaised = voiceConnection.PrimaryRecorder.TransmitEnabled;
     }
 
@@ -90,6 +92,7 @@ public class EleveExe : MonoBehaviourPun
     public void Mute() {
         voiceConnection.PrimaryRecorder.TransmitEnabled = false;
         speakButton.image.color = new Color(255, 255, 255);
+        speakButton.GetComponentInChildren<TMP_Text>().text = "Lever la main";
         handRaised = false;
     }
 

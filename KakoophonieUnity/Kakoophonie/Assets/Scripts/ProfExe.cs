@@ -19,7 +19,8 @@ namespace Exe{
         [SerializeField] TMP_Text title = null;
         [SerializeField] TMP_Text groupLabel = null;
         [SerializeField] VoiceConnection voiceConnection = null;
-        [SerializeField] Button speakButton = null;
+        [SerializeField] Button speakGroupButton = null;
+        [SerializeField] Button speakEveryoneButton = null;
         [SerializeField] PlayerList playerList = null;
         [SerializeField] GameObject groupInfo = null;
         [SerializeField] GameObject groupList = null;
@@ -300,6 +301,7 @@ namespace Exe{
             group.Add(lp);
             groupWrong.Add(0);
             groupRight.Add(0);
+            speakEveryoneButton.gameObject.SetActive(true);
             DisplayGroupItems();
         }
 
@@ -311,7 +313,7 @@ namespace Exe{
 
         public void SpeakToClass() {
             voiceConnection.PrimaryRecorder.TransmitEnabled = !voiceConnection.PrimaryRecorder.TransmitEnabled;
-            speakButton.image.color = voiceConnection.PrimaryRecorder.TransmitEnabled? new Color(0, 255, 0) : new Color(255, 255, 255);
+            speakGroupButton.image.color = voiceConnection.PrimaryRecorder.TransmitEnabled? new Color(0, 255, 0) : new Color(255, 255, 255);
         }
 
         [PunRPC] 
