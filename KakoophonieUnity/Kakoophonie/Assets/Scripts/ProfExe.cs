@@ -20,17 +20,19 @@ namespace Exe{
         [SerializeField] VoiceConnection voiceConnection = null;
         [SerializeField] Button speakButton = null;
         [SerializeField] PlayerList playerList = null;
+        [SerializeField] GameObject groupInfo = null;
+        [SerializeField] GameObject groupList = null;
+        [SerializeField] Button addGroup = null;
         List<string> imagePath = new List<string>();
         List<string> correctAnswer = new List<string>();
         List<TMPro.TMP_Dropdown.OptionData> key = new List<TMP_Dropdown.OptionData>();
         List<TMPro.TMP_Dropdown.OptionData> note = new List<TMP_Dropdown.OptionData>();
-        public List<string> selected = new List<string>();
+        public List<Players> selected = new List<Players>();
         List<List<Players>> group = new List<List<Players>>();
         List<int> groupWrong = new List<int>();
         List<int> groupRight = new List<int>();
         int currentGroup = 0;
-        int groupCount = 2;
-
+        int groupCount = 1;
         //TO Change into ListView
         [SerializeField] List<TMP_Text> wrong;
         [SerializeField] List<TMP_Text> correct;
@@ -210,8 +212,8 @@ namespace Exe{
             if(!otherPlayer.IsMasterClient) {
                 foreach(List<Players> lp in group){
                     foreach (Players p in lp){
-                        if (selected.Contains(p.player.NickName)){
-                            selected.Remove(p.player.NickName);
+                        if (selected.Contains(p)){
+                            selected.Remove(p);
                         }
                         if (p.player == otherPlayer)
                             group[cptLP].Remove(p);
@@ -238,16 +240,6 @@ namespace Exe{
             PhotonNetwork.LoadLevel("Menu");
         }
 
-        public void SelectPlayer(TMP_Text text){
-            if(text.color == Color.white){
-                text.color = Color.black;
-                selected.Add(text.text);
-            } else {
-                text.color = Color.white;
-                selected.Remove(text.text);
-            }
-        }
-
         public void TransferPlayers(){
             int newG = 0;
             if (currentGroup == 0){ 
@@ -256,9 +248,9 @@ namespace Exe{
                 newG = 0;
             }
             foreach (Players p in group[currentGroup]){
-                if (selected.Contains(p.player.NickName)){
+                if (selected.Contains(p)){
                     group[newG].Add(p);
-                    selected.Remove(p.player.NickName);
+                    selected.Remove(p);
                 }
             }
             foreach (Players p in group[newG]){
@@ -282,6 +274,25 @@ namespace Exe{
                 DisplayStudents();
                 groupLabel.text = "Groupe actuel : \nGroupe "+(currentGroup+1);
             }
+        }
+
+        public void AddGroup(){
+            groupCount++;
+            imagePath.Add("");
+            correctAnswer.Add("Do");
+            key.Add(null);
+            note.Add(null);
+            List<Players> lp = new List<Players>();
+            group.Add(lp);
+            groupWrong.Add(0);
+            groupRight.Add(0);
+            DisplayGroupItems();
+        }
+
+        public void DisplayGroupItems(){
+            addGroup.gameObject.SetActive(false);
+            groupInfo.gameObject.SetActive(true);
+            groupList.gameObject.SetActive(true);
         }
 
         public void SpeakToClass() {

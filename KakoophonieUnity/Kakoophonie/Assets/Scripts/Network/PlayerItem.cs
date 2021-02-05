@@ -14,7 +14,7 @@ public class PlayerItem : MonoBehaviour
     [SerializeField] public Image image = null;
     [SerializeField] public Button hand = null;
 
-    private Players player;
+    public Players player;
     public HandClickedEvent HandClickedEvent = new HandClickedEvent();
 
     public void SetPlayerInfo(Players player) {

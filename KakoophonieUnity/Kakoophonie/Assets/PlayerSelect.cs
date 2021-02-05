@@ -25,10 +25,10 @@ namespace Exe{
         void TaskOnClick(){
             if(img.color == unselected){
                 img.color = selected;
-                prof.selected.Add(playerItem._name.text);
+                prof.selected.Add(playerItem.player);
             } else {
                 img.color = unselected;
-                prof.selected.Remove(playerItem._name.text);
+                prof.selected.Remove(playerItem.player);
             }
         }
     }
