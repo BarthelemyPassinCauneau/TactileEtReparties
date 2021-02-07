@@ -81,7 +81,7 @@ public class EleveExe : MonoBehaviourPun
     }
 
     [PunRPC]
-    public void SpeakToClass() {
+    public void SpeakToGroup() {
         voiceConnection.PrimaryRecorder.TransmitEnabled = !voiceConnection.PrimaryRecorder.TransmitEnabled;
         speakButton.image.color = voiceConnection.PrimaryRecorder.TransmitEnabled? new Color(0, 255, 0) : new Color(255, 255, 255);
         speakButton.GetComponentInChildren<TMP_Text>().text = voiceConnection.PrimaryRecorder.TransmitEnabled? "Vous avez la parole" : "Lever la main";
@@ -91,14 +91,16 @@ public class EleveExe : MonoBehaviourPun
     [PunRPC]
     public void Mute() {
         voiceConnection.PrimaryRecorder.TransmitEnabled = false;
-        speakButton.image.color = new Color(255, 255, 255);
-        speakButton.GetComponentInChildren<TMP_Text>().text = "Lever la main";
+        speakButton.image.color = new Color(1.0f, 0.64f, 0.0f);
+        speakButton.GetComponentInChildren<TMP_Text>().text = "Main levée";
         handRaised = false;
     }
 
     [PunRPC]
-    public void ChangeGroup(byte g) {
-        voiceConnection.Client.ChangeAudioGroups(new byte[0], new byte[1] { g });
-        voiceConnection.PrimaryRecorder.AudioGroup = g;
+    public void SwitchGroup(byte group) {
+        if(voiceConnection.PrimaryRecorder.AudioGroup != group) {
+            voiceConnection.Client.ChangeAudioGroups(new byte[0], new byte[1] { group });
+            voiceConnection.PrimaryRecorder.AudioGroup = group;
+        }
     }
 }

@@ -19,8 +19,8 @@ namespace Exe{
         [SerializeField] TMP_Text title = null;
         [SerializeField] TMP_Text groupLabel = null;
         [SerializeField] VoiceConnection voiceConnection = null;
-        [SerializeField] Button speakGroupButton = null;
-        [SerializeField] Button speakEveryoneButton = null;
+        [SerializeField] Button speakToGroupButton = null;
+        [SerializeField] Button speakToClassButton = null;
         [SerializeField] PlayerList playerList = null;
         [SerializeField] GameObject groupInfo = null;
         [SerializeField] GameObject groupList = null;
@@ -46,7 +46,7 @@ namespace Exe{
             InitDropdown();
             GetStudentList();
             playerList.playerList = group[currentGroup];
-            playerList.UnmuteStudentEvent.AddListener(SpeakToClass);
+            playerList.UnmuteStudentEvent.AddListener(StudentSpeakToGroup);
             playerList.CreateList();
             DisplayStudents();
             ChooseKey.onValueChanged.AddListener(delegate {
@@ -135,9 +135,7 @@ namespace Exe{
             correctAnswer[currentGroup] = ChooseNote.options[ChooseNote.value].text;
             foreach(Players p in group[currentGroup]) {
                 photonView.RPC("ReceiveExercise", p.player, key[currentGroup].text, note[currentGroup].text);
-                photonView.RPC("ChangeGroup", p.player, Convert.ToByte(currentGroup+1));
             }
-            SwitchVocal(Convert.ToByte(currentGroup+1));
         }
 
         public IEnumerator WaitAndHide(float waitTime)
@@ -188,8 +186,10 @@ namespace Exe{
         }
 
         private void SwitchVocal(byte group) {
-            voiceConnection.Client.ChangeAudioGroups(new byte[0], new byte[1] { group });
-            voiceConnection.PrimaryRecorder.AudioGroup = group;
+            if(voiceConnection.PrimaryRecorder.AudioGroup != group) {
+                voiceConnection.Client.ChangeAudioGroups(new byte[0], new byte[1] { group });
+                voiceConnection.PrimaryRecorder.AudioGroup = group;
+            }
         }
 
         private void DisplayStudents(){
@@ -264,7 +264,7 @@ namespace Exe{
                 }
             }
             foreach (Players p in group[newG]){
-                photonView.RPC("ChangeGroup", p.player, Convert.ToByte(newG+1));
+                photonView.RPC("SwitchGroup", p.player, Convert.ToByte(newG+1));
                 if (group[currentGroup].Contains(p)){
                     group[currentGroup].Remove(p);
                 }
@@ -287,7 +287,6 @@ namespace Exe{
                 UpdateList();
                 DisplayStudents();
                 groupLabel.text = "Groupe actuel : \nGroupe "+(currentGroup+1);
-                SwitchVocal(Convert.ToByte(newG+1));
             }
         }
 
@@ -301,7 +300,7 @@ namespace Exe{
             group.Add(lp);
             groupWrong.Add(0);
             groupRight.Add(0);
-            speakEveryoneButton.gameObject.SetActive(true);
+            speakToClassButton.gameObject.SetActive(true);
             DisplayGroupItems();
         }
 
@@ -311,9 +310,21 @@ namespace Exe{
             groupList.gameObject.SetActive(true);
         }
 
-        public void SpeakToClass() {
+        public void SpeakToEveryone() {
+            SwitchVocal(Convert.ToByte(0));
             voiceConnection.PrimaryRecorder.TransmitEnabled = !voiceConnection.PrimaryRecorder.TransmitEnabled;
-            speakGroupButton.image.color = voiceConnection.PrimaryRecorder.TransmitEnabled? new Color(0, 255, 0) : new Color(255, 255, 255);
+            speakToClassButton.image.color = voiceConnection.PrimaryRecorder.TransmitEnabled? new Color(0, 255, 0) : new Color(255, 255, 255);
+        }
+
+        public void SpeakToGroup() {
+            if(!voiceConnection.PrimaryRecorder.TransmitEnabled) {
+                SwitchVocal(Convert.ToByte(currentGroup+1));
+                foreach (Players p in group[currentGroup]){ //A AMELIORER : switcher automatiquement les eleves et le prof quand ils ont rejoint le vocal
+                    photonView.RPC("SwitchGroup", p.player, Convert.ToByte(currentGroup+1));
+                }
+            }
+            voiceConnection.PrimaryRecorder.TransmitEnabled = !voiceConnection.PrimaryRecorder.TransmitEnabled;
+            speakToGroupButton.image.color = voiceConnection.PrimaryRecorder.TransmitEnabled? new Color(0, 255, 0) : new Color(255, 255, 255);
         }
 
         [PunRPC] 
@@ -321,8 +332,8 @@ namespace Exe{
             playerList.RaiseHand(info.Sender);
         }
 
-        public void SpeakToClass(Player p) {
-            photonView.RPC("SpeakToClass", p);
+        public void StudentSpeakToGroup(Player p) {
+            photonView.RPC("SpeakToGroup", p);
         }
     }
 }
