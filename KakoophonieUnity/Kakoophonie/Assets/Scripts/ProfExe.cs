@@ -21,6 +21,7 @@ namespace Exe{
         [SerializeField] VoiceConnection voiceConnection = null;
         [SerializeField] Button speakToGroupButton = null;
         [SerializeField] Button speakToClassButton = null;
+        [SerializeField] Button privateCallButton = null;
         [SerializeField] PlayerList playerList = null;
         [SerializeField] GameObject groupInfo = null;
         [SerializeField] GameObject groupList = null;
@@ -31,6 +32,7 @@ namespace Exe{
         List<TMPro.TMP_Dropdown.OptionData> note = new List<TMP_Dropdown.OptionData>();
         public List<Players> selected = new List<Players>();
         List<List<Players>> group = new List<List<Players>>();
+        List<Players> studentsInPrivateCall = new List<Players>();
         List<int> groupWrong = new List<int>();
         List<int> groupRight = new List<int>();
         int currentGroup = 0;
@@ -185,13 +187,6 @@ namespace Exe{
             DisplayGroupList();
         }
 
-        private void SwitchVocal(byte group) {
-            if(voiceConnection.PrimaryRecorder.AudioGroup != group) {
-                voiceConnection.Client.ChangeAudioGroups(new byte[0], new byte[1] { group });
-                voiceConnection.PrimaryRecorder.AudioGroup = group;
-            }
-        }
-
         private void DisplayStudents(){
             for(int i = 0; i < group[currentGroup].Count; i++){
                 if(group[currentGroup][i].answer == correctAnswer[currentGroup]){
@@ -264,7 +259,7 @@ namespace Exe{
                 }
             }
             foreach (Players p in group[newG]){
-                photonView.RPC("SwitchGroup", p.player, Convert.ToByte(newG+1));
+                photonView.RPC("TransferGroup", p.player, Convert.ToByte(newG+1), newG);
                 if (group[currentGroup].Contains(p)){
                     group[currentGroup].Remove(p);
                 }
@@ -278,7 +273,10 @@ namespace Exe{
             int newG = currentGroup + direction;
             if (newG < groupCount && newG >= 0){
                 foreach (Players p in group[currentGroup]){
-                    photonView.RPC("Mute", p.player);
+                    photonView.RPC("ProfLeftGroup", p.player);
+                }
+                foreach (Players p in group[newG]){
+                    photonView.RPC("ProfJoinGroup", p.player);
                 }
                 if(imagePath[newG] != "" && key[newG] != null && note[newG] != null){
                     image.sprite = Resources.Load<Sprite>(imagePath[newG]);
@@ -310,6 +308,10 @@ namespace Exe{
             groupList.gameObject.SetActive(true);
         }
 
+        /**
+         * START VOCAL FONCTIONS
+         */
+
         public void SpeakToEveryone() {
             SwitchVocal(Convert.ToByte(0));
             voiceConnection.PrimaryRecorder.TransmitEnabled = !voiceConnection.PrimaryRecorder.TransmitEnabled;
@@ -327,13 +329,49 @@ namespace Exe{
             speakToGroupButton.image.color = voiceConnection.PrimaryRecorder.TransmitEnabled? new Color(0, 255, 0) : new Color(255, 255, 255);
         }
 
-        [PunRPC] 
-        public void StudentRaiseHand(PhotonMessageInfo info) {
-            playerList.RaiseHand(info.Sender);
+        public void PrivateCall() {
+            if(!voiceConnection.PrimaryRecorder.TransmitEnabled && selected.Count > 0) {
+                SwitchVocal(Convert.ToByte(42));
+                foreach (Players p in selected) {
+                    photonView.RPC("StartPrivateCall", p.player, Convert.ToByte(42));
+                    studentsInPrivateCall.Add(p);
+                }
+                voiceConnection.PrimaryRecorder.TransmitEnabled = true;
+                privateCallButton.image.color = new Color(0, 255, 0);
+                privateCallButton.GetComponentInChildren<TMP_Text>().text = "Appel privé avec "+studentsInPrivateCall.Count+" élève(s)";
+            } else if (voiceConnection.PrimaryRecorder.TransmitEnabled && voiceConnection.PrimaryRecorder.AudioGroup == Convert.ToByte(42)) {
+                SwitchVocal(Convert.ToByte(currentGroup+1));
+                foreach (Players p in studentsInPrivateCall) {
+                    photonView.RPC("EndPrivateCall", p.player);
+                }
+                studentsInPrivateCall.Clear();
+                privateCallButton.image.color = new Color(255, 255, 255);
+                voiceConnection.PrimaryRecorder.TransmitEnabled = false;
+                privateCallButton.GetComponentInChildren<TMP_Text>().text = "Appel privé";
+            }
+        }
+
+        private void SwitchVocal(byte group) {
+            if(voiceConnection.PrimaryRecorder.AudioGroup != group) {
+                voiceConnection.Client.ChangeAudioGroups(new byte[0], new byte[1] { group });
+                voiceConnection.PrimaryRecorder.AudioGroup = group;
+            }
         }
 
         public void StudentSpeakToGroup(Player p) {
+            SwitchVocal(Convert.ToByte(currentGroup+1));
+            foreach (Players players in group[currentGroup]){ //A AMELIORER : switcher automatiquement les eleves et le prof quand ils ont rejoint le vocal
+                photonView.RPC("SwitchGroup", players.player, Convert.ToByte(currentGroup+1));
+            }
             photonView.RPC("SpeakToGroup", p);
+        }
+        /**
+         * END VOCAL FONCTIONS
+         */
+
+        [PunRPC] 
+        public void StudentRaiseHand(PhotonMessageInfo info) {
+            playerList.RaiseHand(info.Sender);
         }
     }
 }

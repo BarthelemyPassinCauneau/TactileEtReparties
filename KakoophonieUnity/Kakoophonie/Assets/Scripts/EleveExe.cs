@@ -16,9 +16,11 @@ public class EleveExe : MonoBehaviourPun
     [SerializeField] TMP_Text title = null;
     [SerializeField] VoiceConnection voiceConnection = null;
     [SerializeField] Button speakButton = null;
+    [SerializeField] TMP_Text info = null;
     string imagePath = "";
     string correctAnswer = "";
     bool handRaised = false;
+    byte saveGroupNmb = 0;
 
     void Start()
     {
@@ -48,6 +50,7 @@ public class EleveExe : MonoBehaviourPun
         imagePath = "Images/"+key+"/"+note;
         correctAnswer = note;
         image.sprite = Resources.Load<Sprite>(imagePath);
+        DisplayMessage("Nouvel exercice !");
     }
 
     [PunRPC]
@@ -80,6 +83,16 @@ public class EleveExe : MonoBehaviourPun
         voiceConnection.PrimaryRecorder.TransmitEnabled = false;
     }
 
+    private void DisplayMessage(string text) {
+        info.text = text;
+        StartCoroutine(Coroutine());
+    }
+
+    public IEnumerator Coroutine() {
+        yield return new WaitForSeconds(1);
+        info.text = "";
+    }
+
     [PunRPC]
     public void SpeakToGroup() {
         voiceConnection.PrimaryRecorder.TransmitEnabled = !voiceConnection.PrimaryRecorder.TransmitEnabled;
@@ -89,11 +102,50 @@ public class EleveExe : MonoBehaviourPun
     }
 
     [PunRPC]
-    public void Mute() {
+    public void ProfJoinGroup() {
+        if(saveGroupNmb == 0) {
+            voiceConnection.PrimaryRecorder.TransmitEnabled = false;
+            speakButton.image.color = new Color(255, 255, 255);
+            DisplayMessage("Le professeur a rejoint votre groupe");
+            speakButton.GetComponentInChildren<TMP_Text>().text = "Lever la main";
+            speakButton.interactable = true;
+            handRaised = false;
+        }
+    }
+
+    [PunRPC]
+    public void ProfLeftGroup() {
+        if(saveGroupNmb == 0) {
+            voiceConnection.PrimaryRecorder.TransmitEnabled = false;
+            speakButton.image.color = new Color(255, 255, 255);
+            DisplayMessage("Le professeur a quitté votre groupe");
+            speakButton.GetComponentInChildren<TMP_Text>().text = "Lever la main";
+            speakButton.interactable = false;
+            handRaised = false;
+        }
+    }
+
+    [PunRPC]
+    public void StartPrivateCall(byte group) {
+        voiceConnection.PrimaryRecorder.TransmitEnabled = true;
+        info.text = "Vous êtes en appel privé";
+        saveGroupNmb = voiceConnection.PrimaryRecorder.AudioGroup;
+        SwitchGroup(group);
+    }
+
+    [PunRPC]
+    public void EndPrivateCall() {
         voiceConnection.PrimaryRecorder.TransmitEnabled = false;
-        speakButton.image.color = new Color(1.0f, 0.64f, 0.0f);
-        speakButton.GetComponentInChildren<TMP_Text>().text = "Main levée";
-        handRaised = false;
+        DisplayMessage("L'appel privé est terminé.");
+        SwitchGroup(saveGroupNmb);
+        saveGroupNmb = 0;
+    }
+
+    [PunRPC]
+    public void TransferGroup(byte group, int newG) {
+        DisplayMessage("Vous avez été déplacé dans le groupe "+newG);
+        speakButton.interactable = false;
+        SwitchGroup(group);
     }
 
     [PunRPC]
