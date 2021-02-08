@@ -48,7 +48,9 @@ namespace Exe{
             InitDropdown();
             GetStudentList();
             playerList.playerList = group[currentGroup];
-            playerList.UnmuteStudentEvent.AddListener(StudentSpeakToGroup);
+            playerList.ProfExeHandClickedEvent.AddListener(StudentSpeakToGroup);
+            playerList.ProfExeMuteClickedEvent.AddListener(MuteStudent);
+            playerList.ProfExeUnMuteClickedEvent.AddListener(UnMuteStudent);
             playerList.CreateList();
             DisplayStudents();
             ChooseKey.onValueChanged.AddListener(delegate {
@@ -358,6 +360,8 @@ namespace Exe{
             }
         }
 
+        
+        //Fonctions appelées avec les callbacks de PlayerItem
         public void StudentSpeakToGroup(Player p) {
             SwitchVocal(Convert.ToByte(currentGroup+1));
             foreach (Players players in group[currentGroup]){ //A AMELIORER : switcher automatiquement les eleves et le prof quand ils ont rejoint le vocal
@@ -365,6 +369,13 @@ namespace Exe{
             }
             photonView.RPC("SpeakToGroup", p);
         }
+        public void MuteStudent(Player p) {
+            photonView.RPC("Mute", p);
+        }
+        public void UnMuteStudent(Player p) {
+            photonView.RPC("UnMute", p);
+        }
+
         /**
          * END VOCAL FONCTIONS
          */

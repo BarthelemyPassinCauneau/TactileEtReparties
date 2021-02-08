@@ -126,6 +126,22 @@ public class EleveExe : MonoBehaviourPun
     }
 
     [PunRPC]
+    public void Mute() {
+        if(saveGroupNmb == 0) {
+            voiceConnection.PrimaryRecorder.TransmitEnabled = false;
+            DisplayMessage("Le professeur vous a mit en sourdine");
+        }
+    }
+
+    [PunRPC]
+    public void UnMute() {
+        if(saveGroupNmb == 0) {
+            voiceConnection.PrimaryRecorder.TransmitEnabled = true;
+            DisplayMessage("Le professeur vous a redonné la parole");
+        }
+    }
+
+    [PunRPC]
     public void StartPrivateCall(byte group) {
         voiceConnection.PrimaryRecorder.TransmitEnabled = true;
         info.text = "Vous êtes en appel privé";

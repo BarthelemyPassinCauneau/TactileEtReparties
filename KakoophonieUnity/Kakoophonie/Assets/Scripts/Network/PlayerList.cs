@@ -13,13 +13,17 @@ namespace Exe{
         [SerializeField] private Transform _content = null;
         public List<Players> playerList = new List<Players>();
         public Dictionary<Players, PlayerItem> PlayerItemList = new Dictionary<Players, PlayerItem>();
-        public UnmuteStudentEvent UnmuteStudentEvent = new UnmuteStudentEvent();
+        public ProfExeHandClickedEvent ProfExeHandClickedEvent = new ProfExeHandClickedEvent();
+        public ProfExeMuteClickedEvent ProfExeMuteClickedEvent = new ProfExeMuteClickedEvent();
+        public ProfExeUnMuteClickedEvent ProfExeUnMuteClickedEvent = new ProfExeUnMuteClickedEvent();
 
         public void CreateList(){
             foreach(Players p in playerList){
                 PlayerItem PI = Instantiate(_participantItem, _content);
                 PI.SetPlayerInfo(p);
-                PI.HandClickedEvent.AddListener(OnClickHand);
+                PI.PlayerListHandClickedEvent.AddListener(OnClickHand);
+                PI.PlayerListMuteClickedEvent.AddListener(OnClickMute);
+                PI.PlayerListUnMuteClickedEvent.AddListener(OnClickUnMute);
                 PlayerItemList[p] = (PI);
             }
         }
@@ -67,9 +71,23 @@ namespace Exe{
             }
         }
 
-        public void OnClickHand(Player p) {
-            UnmuteStudentEvent.Invoke(p);
+        /*
+         * Fonctions callbacks pour transmettre les clics des boutons dans les items et les remonter au ProfExe
+         */
+
+        private void OnClickHand(Player p) {
+            ProfExeHandClickedEvent.Invoke(p);
+        }
+
+        private void OnClickMute(Player p) {
+            ProfExeMuteClickedEvent.Invoke(p);
+        }
+
+        private void OnClickUnMute(Player p) {
+            ProfExeUnMuteClickedEvent.Invoke(p);
         }
     }
 }
-public class UnmuteStudentEvent : UnityEvent<Player> {}
+public class ProfExeHandClickedEvent : UnityEvent<Player> {}
+public class ProfExeMuteClickedEvent : UnityEvent<Player> {}
+public class ProfExeUnMuteClickedEvent : UnityEvent<Player> {}
