@@ -97,7 +97,8 @@ public class EleveExe : MonoBehaviourPun
     public void SpeakToGroup() {
         voiceConnection.PrimaryRecorder.TransmitEnabled = !voiceConnection.PrimaryRecorder.TransmitEnabled;
         speakButton.image.color = voiceConnection.PrimaryRecorder.TransmitEnabled? new Color(0, 255, 0) : new Color(255, 255, 255);
-        speakButton.GetComponentInChildren<TMP_Text>().text = voiceConnection.PrimaryRecorder.TransmitEnabled? "Vous avez la parole" : "Lever la main";
+        DisplayMessage("Vous avez la parole");
+        speakButton.GetComponentInChildren<TMP_Text>().text = voiceConnection.PrimaryRecorder.TransmitEnabled? "Baisser la main" : "Lever la main";
         handRaised = voiceConnection.PrimaryRecorder.TransmitEnabled;
     }
 
@@ -129,7 +130,7 @@ public class EleveExe : MonoBehaviourPun
     public void Mute() {
         if(saveGroupNmb == 0) {
             voiceConnection.PrimaryRecorder.TransmitEnabled = false;
-            DisplayMessage("Le professeur vous a mit en sourdine");
+            DisplayMessage("Vous avez été mis en sourdine");
         }
     }
 
@@ -137,7 +138,7 @@ public class EleveExe : MonoBehaviourPun
     public void UnMute() {
         if(saveGroupNmb == 0) {
             voiceConnection.PrimaryRecorder.TransmitEnabled = true;
-            DisplayMessage("Le professeur vous a redonné la parole");
+            DisplayMessage("Vous avez la parole");
         }
     }
 
