@@ -276,6 +276,7 @@ namespace Exe{
             if (newG < groupCount && newG >= 0){
                 foreach (Players p in group[currentGroup]){
                     photonView.RPC("ProfLeftGroup", p.player);
+                    selected.Remove(p);
                 }
                 foreach (Players p in group[newG]){
                     photonView.RPC("ProfJoinGroup", p.player);
