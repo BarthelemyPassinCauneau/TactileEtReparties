@@ -160,7 +160,7 @@ public class EleveExe : MonoBehaviourPun
 
     [PunRPC]
     public void TransferGroup(byte group, int newG) {
-        DisplayMessage("Vous avez été déplacé dans le groupe "+newG);
+        DisplayMessage("Vous avez été déplacé dans le groupe "+(newG+1));
         speakButton.interactable = false;
         SwitchGroup(group);
     }
