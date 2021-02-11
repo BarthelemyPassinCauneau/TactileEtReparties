@@ -89,7 +89,7 @@ public class EleveExe : MonoBehaviourPun
     }
 
     public IEnumerator Coroutine() {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
         info.text = "";
     }
 
