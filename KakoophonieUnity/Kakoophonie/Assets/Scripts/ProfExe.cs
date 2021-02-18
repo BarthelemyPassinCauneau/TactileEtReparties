@@ -25,6 +25,7 @@ namespace Exe{
         [SerializeField] PlayerList playerList = null;
         [SerializeField] GameObject groupInfo = null;
         [SerializeField] GameObject groupList = null;
+        [SerializeField] GameObject groupFrame = null;
         [SerializeField] Button addGroup = null;
         List<string> imagePath = new List<string>();
         List<string> correctAnswer = new List<string>();
@@ -68,7 +69,7 @@ namespace Exe{
         }
 
         void InitComp(){
-            title.text = "Kakoophonie - Professeur "+ PhotonNetwork.NickName;
+            title.text = "Professeur "+ PhotonNetwork.NickName;
             groupLabel.text = "Groupe actuel : \nGroupe "+(currentGroup+1);
             for(int i = 0; i < groupCount; i++){
                 imagePath.Add("");
@@ -308,6 +309,7 @@ namespace Exe{
         public void DisplayGroupItems(){
             addGroup.gameObject.SetActive(false);
             groupInfo.gameObject.SetActive(true);
+            groupFrame.gameObject.SetActive(true);
             groupList.gameObject.SetActive(true);
         }
 
