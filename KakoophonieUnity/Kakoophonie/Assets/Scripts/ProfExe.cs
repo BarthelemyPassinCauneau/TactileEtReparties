@@ -27,10 +27,12 @@ namespace Exe{
         [SerializeField] GameObject groupInfo = null;
         [SerializeField] GameObject groupFrame = null;
         [SerializeField] Button addGroup = null;
-        [SerializeField] List<TMP_Text> wrong;
-        [SerializeField] List<TMP_Text> correct;
-        [SerializeField] List<TMP_Text> count;
-        [SerializeField] Button transferButton;
+        [SerializeField] List<TMP_Text> wrong = null;
+        [SerializeField] List<TMP_Text> correct = null;
+        [SerializeField] List<TMP_Text> count = null;
+        [SerializeField] Button transferButton = null;
+        [SerializeField] Button changeGroupButton = null;
+        [SerializeField] Button sendExerciceButton = null;
         List<string> imagePath = new List<string>();
         List<string> correctAnswer = new List<string>();
         List<TMPro.TMP_Dropdown.OptionData> key = new List<TMP_Dropdown.OptionData>();
@@ -64,6 +66,21 @@ namespace Exe{
                 transferButton.interactable = false;
             } else {
                 transferButton.interactable = true;
+            }
+            if(currentGroupSelected == null || currentGroupSelected.ID == currentGroup){
+                changeGroupButton.interactable = false;
+            } else {
+                changeGroupButton.interactable = true;
+            }
+            if(group.Count < 2){
+                speakToGroupButton.interactable = false;
+            } else {
+                speakToGroupButton.interactable = true;
+            }
+            if(selected.Count < 1 ){
+                privateCallButton.interactable = false;
+            } else {
+                privateCallButton.interactable = true;
             }
         }
 
@@ -106,6 +123,7 @@ namespace Exe{
             groupList.ResetList();
             groupList.groupList = group;
             groupList.CreateList();
+            groupList.SelectedColor(currentGroupSelected);
             playerList.ResetList();
             playerList.playerList = group[currentGroup].players;
             playerList.CreateList();
@@ -114,7 +132,9 @@ namespace Exe{
         public void SendExercise(){
             IEnumerator coroutine;
             feedback.text = "Exercice envoyé";
-            coroutine = WaitAndHide(2);
+            
+            coroutine = WaitAndHide(4);
+            sendExerciceButton.interactable = false;
             StartCoroutine(coroutine);
             feedback.color = Color.green;
             //Reset student answers
@@ -139,6 +159,7 @@ namespace Exe{
         {
             yield return new WaitForSeconds(waitTime);
             feedback.text = "";
+            sendExerciceButton.interactable = true;
         }
 
         [PunRPC]
@@ -341,7 +362,7 @@ namespace Exe{
                 studentsInPrivateCall.Clear();
                 privateCallButton.image.color = new Color(255, 255, 255);
                 voiceConnection.PrimaryRecorder.TransmitEnabled = false;
-                privateCallButton.GetComponentInChildren<TMP_Text>().text = "Appel privé";
+                privateCallButton.GetComponentInChildren<TMP_Text>().text = "en privé";
             }
         }
 

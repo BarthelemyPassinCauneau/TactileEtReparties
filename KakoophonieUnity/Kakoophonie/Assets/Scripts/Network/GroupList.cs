@@ -11,6 +11,7 @@ namespace Exe{
     {
         [SerializeField] private GroupItem _participantItem = null;
         [SerializeField] private Transform _content = null;
+        [SerializeField] private Color selected;
         public List<Groups> groupList = new List<Groups>();
         public Dictionary<Groups, GroupItem> GroupItemList = new Dictionary<Groups, GroupItem>();
         private Color unselected;
@@ -39,6 +40,13 @@ namespace Exe{
             GroupItem GI = Instantiate(_participantItem, _content);            
             GI.SetGroupInfo(g);
             GroupItemList[g] = GI;
+        }
+        public void SelectedColor(Groups g){
+            foreach(GroupItem GI in GroupItemList.Values){
+                if (GI.group == g){
+                    GI.image.color = selected;
+                }
+            }
         }
         public void ResetSelectColor(){
             foreach(GroupItem GI in GroupItemList.Values){
