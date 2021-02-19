@@ -123,7 +123,6 @@ namespace Exe{
             groupList.ResetList();
             groupList.groupList = group;
             groupList.CreateList();
-            groupList.SelectedColor(currentGroupSelected);
             playerList.ResetList();
             playerList.playerList = group[currentGroup].players;
             playerList.CreateList();

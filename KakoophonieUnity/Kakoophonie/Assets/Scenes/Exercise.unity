@@ -11553,6 +11553,7 @@ MonoBehaviour:
   - {fileID: 0}
   transferButton: {fileID: 1336980667}
   changeGroupButton: {fileID: 1653683635}
+  sendExerciceButton: {fileID: 1044941921}
 --- !u!114 &2114337202
 MonoBehaviour:
   m_ObjectHideFlags: 0
