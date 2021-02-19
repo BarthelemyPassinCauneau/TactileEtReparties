@@ -27,6 +27,9 @@ namespace Exe{
         [SerializeField] GameObject groupList = null;
         [SerializeField] GameObject groupFrame = null;
         [SerializeField] Button addGroup = null;
+        [SerializeField] List<TMP_Text> wrong;
+        [SerializeField] List<TMP_Text> correct;
+        [SerializeField] List<TMP_Text> count;
         List<string> imagePath = new List<string>();
         List<string> correctAnswer = new List<string>();
         List<TMPro.TMP_Dropdown.OptionData> key = new List<TMP_Dropdown.OptionData>();
@@ -39,9 +42,6 @@ namespace Exe{
         int currentGroup = 0;
         int groupCount = 1;
         //TO Change into ListView
-        [SerializeField] List<TMP_Text> wrong;
-        [SerializeField] List<TMP_Text> correct;
-        [SerializeField] List<TMP_Text> count;
 
         void Start()
         {
@@ -54,12 +54,8 @@ namespace Exe{
             playerList.ProfExeUnMuteClickedEvent.AddListener(UnMuteStudent);
             playerList.CreateList();
             DisplayStudents();
-            ChooseKey.onValueChanged.AddListener(delegate {
-                DropdownValueChanged(ChooseKey.GetComponent<Dropdown>());
-            });
-            ChooseNote.onValueChanged.AddListener(delegate {
-                DropdownValueChanged(ChooseNote.GetComponent<Dropdown>());
-            });
+            ChooseKey.onValueChanged.AddListener(delegate {DropdownValueChanged(ChooseKey.GetComponent<Dropdown>());});
+            ChooseNote.onValueChanged.AddListener(delegate {DropdownValueChanged(ChooseNote.GetComponent<Dropdown>());});
             image.sprite = Resources.Load<Sprite>("Images/Sol/Do");
         }
 
@@ -72,7 +68,7 @@ namespace Exe{
             title.text = "Professeur "+ PhotonNetwork.NickName;
             groupLabel.text = "Groupe actuel : \nGroupe "+(currentGroup+1);
             for(int i = 0; i < groupCount; i++){
-                imagePath.Add("");
+                imagePath.Add("Images/Sol/Do");
                 correctAnswer.Add("Do");
                 key.Add(null);
                 note.Add(null);
@@ -280,7 +276,7 @@ namespace Exe{
                 foreach (Players p in group[newG]){
                     photonView.RPC("ProfJoinGroup", p.player);
                 }
-                if(imagePath[newG] != "" && key[newG] != null && note[newG] != null){
+                if(imagePath[newG] != ""){
                     image.sprite = Resources.Load<Sprite>(imagePath[newG]);
                 }
                 currentGroup = newG;
