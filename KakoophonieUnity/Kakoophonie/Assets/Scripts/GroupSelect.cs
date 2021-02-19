@@ -5,18 +5,18 @@ using System.Collections;
 namespace Exe{
     public class GroupSelect : MonoBehaviour
     {
-        [SerializeField] Image player;
+        [SerializeField] Image group;
         [SerializeField] Color selected;
         private Color unselected;
         private ProfExe prof;
         private Button btn;
         private Image img;
-        private PlayerItem playerItem;
+        private GroupItem groupItem;
 
         void Start () {
-            btn = player.GetComponent<Button>();
-            img = player.GetComponent<Image>();
-            playerItem = player.GetComponent<PlayerItem>();
+            btn = group.GetComponent<Button>();
+            img = group.GetComponent<Image>();
+            groupItem = group.GetComponent<GroupItem>();
             unselected = img.color;
             prof = FindObjectOfType<ProfExe>();
             btn.onClick.AddListener(TaskOnClick);
@@ -24,11 +24,11 @@ namespace Exe{
 
         void TaskOnClick(){
             if(img.color == unselected){
+                prof.ModifySelectedGroup(groupItem.group);
                 img.color = selected;
-                prof.selected.Add(playerItem.player);
             } else {
+                prof.currentGroupSelected = null;
                 img.color = unselected;
-                prof.selected.Remove(playerItem.player);
             }
         }
     }

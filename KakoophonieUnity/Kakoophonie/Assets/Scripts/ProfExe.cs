@@ -23,13 +23,14 @@ namespace Exe{
         [SerializeField] Button speakToClassButton = null;
         [SerializeField] Button privateCallButton = null;
         [SerializeField] PlayerList playerList = null;
+        [SerializeField] GroupList groupList = null;
         [SerializeField] GameObject groupInfo = null;
-        [SerializeField] GameObject groupList = null;
         [SerializeField] GameObject groupFrame = null;
         [SerializeField] Button addGroup = null;
         [SerializeField] List<TMP_Text> wrong;
         [SerializeField] List<TMP_Text> correct;
         [SerializeField] List<TMP_Text> count;
+        [SerializeField] Button transferButton;
         List<string> imagePath = new List<string>();
         List<string> correctAnswer = new List<string>();
         List<TMPro.TMP_Dropdown.OptionData> key = new List<TMP_Dropdown.OptionData>();
@@ -38,12 +39,15 @@ namespace Exe{
         List<Players> studentsInPrivateCall = new List<Players>();
         List<Groups> group = new List<Groups>();
         int currentGroup = 0;
+        public Groups currentGroupSelected = null;
 
         void Start()
         {
             InitComp();
             InitDropdown();
             GetStudentList();
+            groupList.groupList = group;
+            groupList.CreateList();
             playerList.playerList = group[currentGroup].players;
             playerList.ProfExeHandClickedEvent.AddListener(StudentSpeakToGroup);
             playerList.ProfExeMuteClickedEvent.AddListener(MuteStudent);
@@ -53,6 +57,14 @@ namespace Exe{
             ChooseKey.onValueChanged.AddListener(delegate {DropdownValueChanged(ChooseKey.GetComponent<Dropdown>());});
             ChooseNote.onValueChanged.AddListener(delegate {DropdownValueChanged(ChooseNote.GetComponent<Dropdown>());});
             image.sprite = Resources.Load<Sprite>("Images/Sol/Do");
+        }
+
+        private void Update() {
+            if(currentGroupSelected == null || currentGroupSelected.ID == currentGroup || selected.Count < 1){
+                transferButton.interactable = false;
+            } else {
+                transferButton.interactable = true;
+            }
         }
 
         void DropdownValueChanged(Dropdown dd){
@@ -91,18 +103,12 @@ namespace Exe{
         }
 
         void UpdateList(){
+            groupList.ResetList();
+            groupList.groupList = group;
+            groupList.CreateList();
             playerList.ResetList();
             playerList.playerList = group[currentGroup].players;
             playerList.CreateList();
-        }
-
-        void DisplayGroupList(){
-            //TO Change into ListView
-            for (int i = 0; i < group.Count; i++){
-                wrong[i].text = group[i].wrong.ToString();
-                correct[i].text = group[i].correct.ToString();
-                count[i].text = group[i].players.Count.ToString();
-            }
         }
 
         public void SendExercise(){
@@ -120,7 +126,6 @@ namespace Exe{
             group[currentGroup].correct = 0;
             group[currentGroup].wrong = 0;
             UpdateList();
-            DisplayGroupList();
             //Photon, send imagePath & correctAnswer to students
             key[currentGroup] = ChooseKey.options[ChooseKey.value];
             note[currentGroup] = ChooseNote.options[ChooseNote.value];
@@ -175,7 +180,6 @@ namespace Exe{
             }
             UpdateList();
             DisplayStudents();
-            DisplayGroupList();
         }
 
         private void DisplayStudents(){
@@ -188,6 +192,14 @@ namespace Exe{
             }
         }
 
+        public void ModifySelectedGroup(Groups g){
+            if(currentGroupSelected != null){
+                groupList.ResetSelectColor();
+                currentGroupSelected = g;
+            }
+            currentGroupSelected = g;
+        }
+
         private void GetStudentList(){
             foreach (Player player in PhotonNetwork.PlayerList){
                 if (player != PhotonNetwork.PlayerList[0]) {
@@ -195,7 +207,6 @@ namespace Exe{
                     group[currentGroup].players.Add(p);
                 }
             }
-            DisplayGroupList();
         }
 
         public void LeaveRoom() {
@@ -219,7 +230,6 @@ namespace Exe{
                     cptLP++;
                 }
                 UpdateList();
-                DisplayGroupList();
                 DisplayStudents();
             }
         }
@@ -228,7 +238,6 @@ namespace Exe{
             Players p = new Players(otherPlayer);
             group[0].players.Add(p);
             UpdateList();
-            DisplayGroupList();
             DisplayStudents();
         }
 
@@ -237,27 +246,22 @@ namespace Exe{
         }
 
         public void TransferPlayers(){
-            int newG = 0;
-            if (currentGroup == 0){ 
-                newG = 1;
-            }  else {
-                newG = 0;
-            }
-            foreach (Players p in group[currentGroup].players){
-                if (selected.Contains(p)){
-                    group[newG].players.Add(p);
-                    selected.Remove(p);
+            if(currentGroupSelected != null && group.Contains(currentGroupSelected) && currentGroupSelected.ID != currentGroup){
+                foreach (Players p in group[currentGroup].players){
+                    if (selected.Contains(p)){
+                        group[currentGroupSelected.ID].players.Add(p);
+                        selected.Remove(p);
+                    }
                 }
-            }
-            foreach (Players p in group[newG].players){
-                photonView.RPC("TransferGroup", p.player, Convert.ToByte(newG+1), newG);
-                if (group[currentGroup].players.Contains(p)){
-                    group[currentGroup].players.Remove(p);
+                foreach (Players p in group[currentGroupSelected.ID].players){
+                    photonView.RPC("TransferGroup", p.player, Convert.ToByte(currentGroupSelected.ID+1), currentGroupSelected.ID);
+                    if (group[currentGroup].players.Contains(p)){
+                        group[currentGroup].players.Remove(p);
+                    }
                 }
+                UpdateList();
+                DisplayStudents();
             }
-            UpdateList();
-            DisplayGroupList();
-            DisplayStudents();
         }
 
         public void ChangeGroup(int direction){
@@ -289,14 +293,13 @@ namespace Exe{
             Groups g = new Groups(group.Count, 0, 0, 0, p);
             group.Add(g);
             speakToClassButton.gameObject.SetActive(true);
+            UpdateList();
             DisplayGroupItems();
         }
 
         public void DisplayGroupItems(){
-            addGroup.gameObject.SetActive(false);
             groupInfo.gameObject.SetActive(true);
             groupFrame.gameObject.SetActive(true);
-            groupList.gameObject.SetActive(true);
         }
 
         /**

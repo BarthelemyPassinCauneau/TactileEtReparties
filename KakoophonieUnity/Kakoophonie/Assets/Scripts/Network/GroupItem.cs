@@ -14,18 +14,23 @@ public class GroupItem : MonoBehaviour
     [SerializeField] public TMP_Text _wrong = null;
     [SerializeField] public TMP_Text _nbPlayer = null;
     [SerializeField] public Image image = null;
-    public Players player;
+    public Groups group;
 
-    public void SetPlayerInfo(Players player) {
-        this.player = player;
-        _name.text = player.player.NickName;
-        _correct.text = player.answer;
-        _wrong.text = player.answer;
-        _nbPlayer.text = player.answer;
+    public void SetGroupInfo(Groups group) {
+        this.group = group;
+        _name.text = "Groupe "+(group.ID+1);
+        _correct.text = group.correct.ToString();
+        _wrong.text = group.wrong.ToString();
+        _nbPlayer.text = group.players.Count.ToString();
     }
 
-    public void addAnswer(string answer){
-        this.player.answer = answer;
-        _correct.text = answer;
+    public void updateNumbers(int correct, int wrong, int nbPlayer){
+        this._correct.text = correct.ToString();
+        this._wrong.text = wrong.ToString();
+        this._nbPlayer.text = nbPlayer.ToString();
+    }
+
+    public void updateColor(){
+        
     }
 }

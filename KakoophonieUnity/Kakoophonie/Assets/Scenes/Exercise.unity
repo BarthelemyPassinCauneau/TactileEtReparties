@@ -6889,7 +6889,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -473, y: -188}
+  m_AnchoredPosition: {x: 385, y: 487}
   m_SizeDelta: {x: 164.00952, y: 55.393753}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1336980667
@@ -7156,7 +7156,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 427667520}
   m_HandleRect: {fileID: 427667519}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -12708,8 +12708,8 @@ MonoBehaviour:
   speakToClassButton: {fileID: 1778755769}
   privateCallButton: {fileID: 1857514069}
   playerList: {fileID: 296850137}
+  groupList: {fileID: 2047034510}
   groupInfo: {fileID: 1939149779}
-  groupList: {fileID: 1696111863}
   groupFrame: {fileID: 1053325100}
   addGroup: {fileID: 1314983642}
   wrong:
@@ -12721,6 +12721,7 @@ MonoBehaviour:
   count:
   - {fileID: 1462471640}
   - {fileID: 1092246918}
+  transferButton: {fileID: 1336980667}
 --- !u!114 &2114337202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12820,7 +12821,7 @@ MonoBehaviour:
   voiceDetection: 0
   voiceDetectionThreshold: 0.01
   voiceDetectionDelayMs: 500
-  unityMicrophoneDevice: Microphone (Realtek(R) Audio)
+  unityMicrophoneDevice: Microphone (USB Camera-B4.09.24.1)
   photonMicrophoneDeviceId: 0
   interestGroup: 0
   debugEchoMode: 0
