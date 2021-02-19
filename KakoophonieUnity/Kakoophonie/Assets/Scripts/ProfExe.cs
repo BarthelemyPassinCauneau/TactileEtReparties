@@ -35,20 +35,16 @@ namespace Exe{
         List<TMPro.TMP_Dropdown.OptionData> key = new List<TMP_Dropdown.OptionData>();
         List<TMPro.TMP_Dropdown.OptionData> note = new List<TMP_Dropdown.OptionData>();
         public List<Players> selected = new List<Players>();
-        List<List<Players>> group = new List<List<Players>>();
         List<Players> studentsInPrivateCall = new List<Players>();
-        List<int> groupWrong = new List<int>();
-        List<int> groupRight = new List<int>();
+        List<Groups> group = new List<Groups>();
         int currentGroup = 0;
-        int groupCount = 1;
-        //TO Change into ListView
 
         void Start()
         {
             InitComp();
             InitDropdown();
             GetStudentList();
-            playerList.playerList = group[currentGroup];
+            playerList.playerList = group[currentGroup].players;
             playerList.ProfExeHandClickedEvent.AddListener(StudentSpeakToGroup);
             playerList.ProfExeMuteClickedEvent.AddListener(MuteStudent);
             playerList.ProfExeUnMuteClickedEvent.AddListener(UnMuteStudent);
@@ -67,18 +63,15 @@ namespace Exe{
         void InitComp(){
             title.text = "Professeur "+ PhotonNetwork.NickName;
             groupLabel.text = "Groupe actuel : \nGroupe "+(currentGroup+1);
-            for(int i = 0; i < groupCount; i++){
-                imagePath.Add("Images/Sol/Do");
-                correctAnswer.Add("Do");
-                key.Add(null);
-                note.Add(null);
-                List<Players> lp = new List<Players>();
-                group.Add(lp);
-                groupWrong.Add(0);
-                groupRight.Add(0);
-                ChooseKey.value = 0;
-                ChooseNote.value = 0;
-            }
+            imagePath.Add("Images/Sol/Do");
+            correctAnswer.Add("Do");
+            key.Add(null);
+            note.Add(null);
+            List<Players> p = new List<Players>();
+            Groups g = new Groups(0, 0, 0, 0, p);
+            group.Add(g);
+            ChooseKey.value = 0;
+            ChooseNote.value = 0;
         }
 
         void InitDropdown(){
@@ -99,16 +92,16 @@ namespace Exe{
 
         void UpdateList(){
             playerList.ResetList();
-            playerList.playerList = group[currentGroup];
+            playerList.playerList = group[currentGroup].players;
             playerList.CreateList();
         }
 
         void DisplayGroupList(){
             //TO Change into ListView
-            for (int i = 0; i < groupCount; i++){
-                wrong[i].text = groupWrong[i].ToString();
-                correct[i].text = groupRight[i].ToString();
-                count[i].text = group[i].Count.ToString();
+            for (int i = 0; i < group.Count; i++){
+                wrong[i].text = group[i].wrong.ToString();
+                correct[i].text = group[i].correct.ToString();
+                count[i].text = group[i].players.Count.ToString();
             }
         }
 
@@ -119,20 +112,20 @@ namespace Exe{
             StartCoroutine(coroutine);
             feedback.color = Color.green;
             //Reset student answers
-            for(int i = 0; i < group[currentGroup].Count; i++){
-                group[currentGroup][i].answer = "";
+            for(int i = 0; i < group[currentGroup].players.Count; i++){
+                group[currentGroup].players[i].answer = "";
             }
             playerList.ResetAnswerColor();
             //Reset answers count
-            groupRight[currentGroup] = 0;
-            groupWrong[currentGroup] = 0;
+            group[currentGroup].correct = 0;
+            group[currentGroup].wrong = 0;
             UpdateList();
             DisplayGroupList();
             //Photon, send imagePath & correctAnswer to students
             key[currentGroup] = ChooseKey.options[ChooseKey.value];
             note[currentGroup] = ChooseNote.options[ChooseNote.value];
             correctAnswer[currentGroup] = ChooseNote.options[ChooseNote.value].text;
-            foreach(Players p in group[currentGroup]) {
+            foreach(Players p in group[currentGroup].players) {
                 photonView.RPC("ReceiveExercise", p.player, key[currentGroup].text, note[currentGroup].text);
             }
         }
@@ -155,8 +148,8 @@ namespace Exe{
             int cptL=0;
             foreach(Player player in PhotonNetwork.PlayerList){
                 if (player == current){
-                    foreach (List<Players> lp in group){
-                        foreach(Players p in lp){
+                    foreach (Groups lp in group){
+                        foreach(Players p in lp.players){
                             if(p.player == current){
                                 p.answer = answer;
                                 if(currentGroup == cptL){
@@ -167,9 +160,9 @@ namespace Exe{
                                     }    
                                 }
                                 if(answer == correctAnswer[cptL]){
-                                    groupRight[cptL]++;
+                                    group[cptL].correct++;
                                 } else {
-                                    groupWrong[cptL]++;
+                                    group[cptL].wrong++;
                                 }  
                             }
 
@@ -186,11 +179,11 @@ namespace Exe{
         }
 
         private void DisplayStudents(){
-            for(int i = 0; i < group[currentGroup].Count; i++){
-                if(group[currentGroup][i].answer == correctAnswer[currentGroup]){
-                    playerList.ApplyAnswerColor(group[currentGroup][i], Color.green);
+            for(int i = 0; i < group[currentGroup].players.Count; i++){
+                if(group[currentGroup].players[i].answer == correctAnswer[currentGroup]){
+                    playerList.ApplyAnswerColor(group[currentGroup].players[i], Color.green);
                 } else {
-                    playerList.ApplyAnswerColor(group[currentGroup][i], Color.red);
+                    playerList.ApplyAnswerColor(group[currentGroup].players[i], Color.red);
                 }
             }
         }
@@ -199,7 +192,7 @@ namespace Exe{
             foreach (Player player in PhotonNetwork.PlayerList){
                 if (player != PhotonNetwork.PlayerList[0]) {
                     Players p = new Players(player); 
-                    group[currentGroup].Add(p);
+                    group[currentGroup].players.Add(p);
                 }
             }
             DisplayGroupList();
@@ -213,13 +206,13 @@ namespace Exe{
         public override void OnPlayerLeftRoom(Player otherPlayer) {
             int cptLP = 0;
             if(!otherPlayer.IsMasterClient) {
-                foreach(List<Players> lp in group){
-                    foreach (Players p in lp){
+                foreach(Groups lp in group){
+                    foreach (Players p in lp.players){
                         if (selected.Contains(p)){
                             selected.Remove(p);
                         }
                         if (p.player == otherPlayer)
-                            group[cptLP].Remove(p);
+                            group[cptLP].players.Remove(p);
                             playerList.PlayerLeftRoom(p);
                             break;
                     }
@@ -233,7 +226,7 @@ namespace Exe{
 
         public override void OnPlayerEnteredRoom(Player otherPlayer){
             Players p = new Players(otherPlayer);
-            group[0].Add(p);
+            group[0].players.Add(p);
             UpdateList();
             DisplayGroupList();
             DisplayStudents();
@@ -250,16 +243,16 @@ namespace Exe{
             }  else {
                 newG = 0;
             }
-            foreach (Players p in group[currentGroup]){
+            foreach (Players p in group[currentGroup].players){
                 if (selected.Contains(p)){
-                    group[newG].Add(p);
+                    group[newG].players.Add(p);
                     selected.Remove(p);
                 }
             }
-            foreach (Players p in group[newG]){
+            foreach (Players p in group[newG].players){
                 photonView.RPC("TransferGroup", p.player, Convert.ToByte(newG+1), newG);
-                if (group[currentGroup].Contains(p)){
-                    group[currentGroup].Remove(p);
+                if (group[currentGroup].players.Contains(p)){
+                    group[currentGroup].players.Remove(p);
                 }
             }
             UpdateList();
@@ -269,12 +262,12 @@ namespace Exe{
 
         public void ChangeGroup(int direction){
             int newG = currentGroup + direction;
-            if (newG < groupCount && newG >= 0){
-                foreach (Players p in group[currentGroup]){
+            if (newG < group.Count && newG >= 0){
+                foreach (Players p in group[currentGroup].players){
                     photonView.RPC("ProfLeftGroup", p.player);
                     selected.Remove(p);
                 }
-                foreach (Players p in group[newG]){
+                foreach (Players p in group[newG].players){
                     photonView.RPC("ProfJoinGroup", p.player);
                 }
                 if(imagePath[newG] != ""){
@@ -288,15 +281,13 @@ namespace Exe{
         }
 
         public void AddGroup(){
-            groupCount++;
             imagePath.Add("");
             correctAnswer.Add("Do");
             key.Add(null);
             note.Add(null);
-            List<Players> lp = new List<Players>();
-            group.Add(lp);
-            groupWrong.Add(0);
-            groupRight.Add(0);
+            List<Players> p = new List<Players>();
+            Groups g = new Groups(group.Count, 0, 0, 0, p);
+            group.Add(g);
             speakToClassButton.gameObject.SetActive(true);
             DisplayGroupItems();
         }
@@ -321,7 +312,7 @@ namespace Exe{
         public void SpeakToGroup() {
             if(!voiceConnection.PrimaryRecorder.TransmitEnabled) {
                 SwitchVocal(Convert.ToByte(currentGroup+1));
-                foreach (Players p in group[currentGroup]){ //A AMELIORER : switcher automatiquement les eleves et le prof quand ils ont rejoint le vocal
+                foreach (Players p in group[currentGroup].players){ //A AMELIORER : switcher automatiquement les eleves et le prof quand ils ont rejoint le vocal
                     photonView.RPC("SwitchGroup", p.player, Convert.ToByte(currentGroup+1));
                 }
             }
@@ -362,7 +353,7 @@ namespace Exe{
         //Fonctions appelées avec les callbacks de PlayerItem
         public void StudentSpeakToGroup(Player p) {
             SwitchVocal(Convert.ToByte(currentGroup+1));
-            foreach (Players players in group[currentGroup]){ //A AMELIORER : switcher automatiquement les eleves et le prof quand ils ont rejoint le vocal
+            foreach (Players players in group[currentGroup].players){ //A AMELIORER : switcher automatiquement les eleves et le prof quand ils ont rejoint le vocal
                 photonView.RPC("SwitchGroup", players.player, Convert.ToByte(currentGroup+1));
             }
             photonView.RPC("SpeakToGroup", p);
