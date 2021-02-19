@@ -264,8 +264,8 @@ namespace Exe{
             }
         }
 
-        public void ChangeGroup(int direction){
-            int newG = currentGroup + direction;
+        public void ChangeGroup(){
+            int newG = currentGroupSelected.ID;
             if (newG < group.Count && newG >= 0){
                 foreach (Players p in group[currentGroup].players){
                     photonView.RPC("ProfLeftGroup", p.player);
