@@ -19,6 +19,7 @@ public class EleveExe : MonoBehaviourPun
     [SerializeField] VoiceConnection voiceConnection = null;
     [SerializeField] Button speakButton = null;
     [SerializeField] TMP_Text info = null;
+    [SerializeField] TMP_Text textGroup = null;
     Stopwatch answerStopwatch = new Stopwatch();
     string imagePath = "";
     string correctAnswer = "";
@@ -171,6 +172,7 @@ public class EleveExe : MonoBehaviourPun
     [PunRPC]
     public void TransferGroup(byte group, int newG) {
         DisplayMessage("Vous avez été déplacé dans le groupe "+(newG+1));
+        textGroup.text = "Groupe : "+(newG+1);
         speakButton.interactable = false;
         SwitchGroup(group);
     }
