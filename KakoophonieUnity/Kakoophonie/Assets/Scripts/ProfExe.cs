@@ -128,10 +128,8 @@ namespace Exe{
             }
             playerList.ResetAnswerColor();
             //Reset answers count
-            for(int i = 0; i < groupCount; i++){
-                groupRight[i] = 0;
-                groupWrong[i] = 0;
-            }
+            groupRight[currentGroup] = 0;
+            groupWrong[currentGroup] = 0;
             UpdateList();
             DisplayGroupList();
             //Photon, send imagePath & correctAnswer to students
