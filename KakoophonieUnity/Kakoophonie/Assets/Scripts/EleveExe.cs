@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -17,6 +19,7 @@ public class EleveExe : MonoBehaviourPun
     [SerializeField] VoiceConnection voiceConnection = null;
     [SerializeField] Button speakButton = null;
     [SerializeField] TMP_Text info = null;
+    Stopwatch answerStopwatch = new Stopwatch();
     string imagePath = "";
     string correctAnswer = "";
     bool handRaised = false;
@@ -43,21 +46,6 @@ public class EleveExe : MonoBehaviourPun
         feedback.color = Color.gray; 
     }
 
-    [PunRPC]
-    public void ReceiveExercise(string key, string note){
-        confirm.interactable = true;
-        feedback.text = "";
-        imagePath = "Images/"+key+"/"+note;
-        correctAnswer = note;
-        image.sprite = Resources.Load<Sprite>(imagePath);
-        DisplayMessage("Nouvel exercice !");
-    }
-
-    [PunRPC]
-    public void LeaveRoom() {
-        PhotonNetwork.LeaveRoom();
-    }
-
     public void OnLeftRoom() {
         PhotonNetwork.LoadLevel("Menu");
     }
@@ -72,7 +60,9 @@ public class EleveExe : MonoBehaviourPun
             feedback.color = Color.yellow;
         }
         //Photon, send my answer to professor
-        photonView.RPC("ReceiveAnswer", RpcTarget.MasterClient, ChooseNote.options[ChooseNote.value].text);
+        answerStopwatch.Stop();
+        photonView.RPC("ReceiveAnswer", RpcTarget.MasterClient, ChooseNote.options[ChooseNote.value].text, answerStopwatch.Elapsed.TotalMilliseconds);
+        answerStopwatch.Reset();
     }
 
     public void RaiseHand() {
@@ -91,6 +81,26 @@ public class EleveExe : MonoBehaviourPun
     public IEnumerator Coroutine() {
         yield return new WaitForSeconds(2);
         info.text = "";
+    }
+
+    /*
+     * FONCTIONS EXPOSEES PAR PHOTON POUR LE PROFESSEUR
+     */
+
+    [PunRPC]
+    public void ReceiveExercise(string key, string note){
+        confirm.interactable = true;
+        feedback.text = "";
+        imagePath = "Images/"+key+"/"+note;
+        correctAnswer = note;
+        image.sprite = Resources.Load<Sprite>(imagePath);
+        DisplayMessage("Nouvel exercice !");
+        answerStopwatch.Start();
+    }
+
+    [PunRPC]
+    public void LeaveRoom() {
+        PhotonNetwork.LeaveRoom();
     }
 
     [PunRPC]

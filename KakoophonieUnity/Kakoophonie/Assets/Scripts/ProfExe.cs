@@ -144,8 +144,9 @@ namespace Exe{
         }
 
         [PunRPC]
-        public void ReceiveAnswer(string answer, PhotonMessageInfo info){
+        public void ReceiveAnswer(string answer, double answerTime, PhotonMessageInfo info){
             //Photon update answerList
+            Debug.Log(answerTime);
             UpdateAnswer(info.Sender, answer);
         }
 
