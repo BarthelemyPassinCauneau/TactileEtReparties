@@ -46,6 +46,9 @@ namespace Exe{
             }
             PlayerItemList.Clear();
         }
+        public void DisplayScore(Players p) {
+            PlayerItemList[p].SetScoreInfo(p);
+        }
         public void ApplyAnswerColor(Players p, Color c){
             PlayerItemList[p]._answer.color = c;
         }

@@ -62,7 +62,7 @@ public class EleveExe : MonoBehaviourPun
         }
         //Photon, send my answer to professor
         answerStopwatch.Stop();
-        photonView.RPC("ReceiveAnswer", RpcTarget.MasterClient, ChooseNote.options[ChooseNote.value].text, answerStopwatch.Elapsed.TotalMilliseconds);
+        photonView.RPC("ReceiveAnswer", RpcTarget.MasterClient, ChooseNote.options[ChooseNote.value].text, answerStopwatch.Elapsed.TotalSeconds);
         answerStopwatch.Reset();
     }
 

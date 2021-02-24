@@ -164,11 +164,10 @@ namespace Exe{
         [PunRPC]
         public void ReceiveAnswer(string answer, double answerTime, PhotonMessageInfo info){
             //Photon update answerList
-            Debug.Log(answerTime);
-            UpdateAnswer(info.Sender, answer);
+            UpdateAnswer(info.Sender, answer, answerTime);
         }
 
-        private void UpdateAnswer(Player current, string answer){
+        private void UpdateAnswer(Player current, string answer, double answerTime){
             int cptP=0;
             int cptL=0;
             foreach(Player player in PhotonNetwork.PlayerList){
@@ -177,13 +176,17 @@ namespace Exe{
                         foreach(Players p in lp.players){
                             if(p.player == current){
                                 p.answer = answer;
+                                p.questionsAnswered++;
                                 if(currentGroup == cptL){
                                     if(answer == correctAnswer[currentGroup]){
                                         playerList.ApplyAnswerColor(p, Color.green);
+                                        p.correctAnswers++;
+                                        p.time.Add((float) answerTime);
                                     } else {
                                         playerList.ApplyAnswerColor(p, Color.red);
                                     }    
                                 }
+                                playerList.DisplayScore(p);
                                 if(answer == correctAnswer[cptL]){
                                     group[cptL].correct++;
                                 } else {
@@ -275,6 +278,7 @@ namespace Exe{
                 }
                 foreach (Players p in group[currentGroupSelected.ID].players){
                     photonView.RPC("TransferGroup", p.player, Convert.ToByte(currentGroupSelected.ID+1), currentGroupSelected.ID);
+                    p.ResetAnswers();
                     if (group[currentGroup].players.Contains(p)){
                         group[currentGroup].players.Remove(p);
                     }

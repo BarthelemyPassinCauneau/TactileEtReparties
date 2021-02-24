@@ -11,6 +11,8 @@ public class PlayerItem : MonoBehaviour
 {
     [SerializeField] public TMP_Text _name = null;
     [SerializeField] public TMP_Text _answer = null;
+    [SerializeField] public TMP_Text _score = null;
+    [SerializeField] public TMP_Text _averageTime = null;
     [SerializeField] public Image image = null;
     [SerializeField] public Button hand = null;
     [SerializeField] public Button mic = null;
@@ -25,6 +27,33 @@ public class PlayerItem : MonoBehaviour
         this.player = player;
         _name.text = player.player.NickName;
         _answer.text = player.answer;
+        if(player.questionsAnswered > 0) {
+            _score.text = player.correctAnswers + "/" + player.questionsAnswered;
+            if(player.getAverageTime() != 0) {
+                _averageTime.text = player.getAverageTime() + " s";
+            }
+            SetScoreColor();
+        }
+    }
+
+    public void SetScoreInfo(Players player) {
+        this.player = player;
+        _score.text = player.correctAnswers + "/" + player.questionsAnswered;
+        if(player.getAverageTime() != 0) {
+            _averageTime.text = player.getAverageTime() + " s";
+        }
+        SetScoreColor();
+    }
+
+    private void SetScoreColor() {
+        if(player.questionsAnswered > 0) {
+            if(player.correctAnswers == 0) _score.color = Color.red;
+            else if(player.correctAnswers == player.questionsAnswered) _score.color = new Color(1, 0.79f, 0);
+            else if((float)player.correctAnswers/(float)player.questionsAnswered < 0.5f) _score.color = Color.red;
+            else if((float)player.correctAnswers/(float)player.questionsAnswered >= 0.5f) _score.color = Color.green;
+        } else {
+            _score.color  = Color.black;
+        }
     }
 
     public void addAnswer(string answer){
