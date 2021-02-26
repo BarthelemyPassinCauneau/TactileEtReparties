@@ -47,6 +47,7 @@ namespace Exe{
             PlayerItemList.Clear();
         }
         public void DisplayScore(Players p) {
+            if(PlayerItemList.ContainsKey(p))
             PlayerItemList[p].SetScoreInfo(p);
         }
         public void ApplyAnswerColor(Players p, Color c){

@@ -17,7 +17,6 @@ namespace Exe{
         [SerializeField] Image image = null;
         [SerializeField] TMP_Text feedback = null;
         [SerializeField] TMP_Text title = null;
-        [SerializeField] TMP_Text groupLabel = null;
         [SerializeField] VoiceConnection voiceConnection = null;
         [SerializeField] Button speakToGroupButton = null;
         [SerializeField] Button speakToClassButton = null;
@@ -42,6 +41,7 @@ namespace Exe{
         List<Groups> group = new List<Groups>();
         int currentGroup = 0;
         public Groups currentGroupSelected = null;
+        int initialGroupSize = 2;
 
         void Start()
         {
@@ -50,6 +50,7 @@ namespace Exe{
             GetStudentList();
             groupList.groupList = group;
             groupList.CreateList();
+            DisplayMainGroup();
             playerList.playerList = group[currentGroup].players;
             playerList.ProfExeHandClickedEvent.AddListener(StudentSpeakToGroup);
             playerList.ProfExeMuteClickedEvent.AddListener(MuteStudent);
@@ -72,11 +73,6 @@ namespace Exe{
             } else {
                 changeGroupButton.interactable = true;
             }
-            if(group.Count < 2){
-                speakToGroupButton.interactable = false;
-            } else {
-                speakToGroupButton.interactable = true;
-            }
             if(selected.Count < 1 ){
                 privateCallButton.interactable = false;
             } else {
@@ -91,7 +87,6 @@ namespace Exe{
 
         void InitComp(){
             title.text = "Professeur "+ PhotonNetwork.NickName;
-            groupLabel.text = "Groupe actuel : \nGroupe "+(currentGroup+1);
             imagePath.Add("Images/Sol/Do");
             correctAnswer.Add("Do");
             key.Add(null);
@@ -126,6 +121,7 @@ namespace Exe{
             playerList.ResetList();
             playerList.playerList = group[currentGroup].players;
             playerList.CreateList();
+            DisplayMainGroup();
         }
 
         public void SendExercise(){
@@ -180,18 +176,18 @@ namespace Exe{
                                 if(currentGroup == cptL){
                                     if(answer == correctAnswer[currentGroup]){
                                         playerList.ApplyAnswerColor(p, Color.green);
-                                        p.correctAnswers++;
-                                        p.time.Add((float) answerTime);
                                     } else {
                                         playerList.ApplyAnswerColor(p, Color.red);
                                     }    
                                 }
-                                playerList.DisplayScore(p);
                                 if(answer == correctAnswer[cptL]){
+                                    p.correctAnswers++;
+                                    p.time.Add((float) answerTime);
                                     group[cptL].correct++;
                                 } else {
                                     group[cptL].wrong++;
                                 }  
+                                playerList.DisplayScore(p);
                             }
 
                             cptP++;
@@ -304,7 +300,6 @@ namespace Exe{
                 currentGroup = newG;
                 UpdateList();
                 DisplayStudents();
-                groupLabel.text = "Groupe actuel : \nGroupe "+(currentGroup+1);
             }
         }
 
@@ -318,12 +313,7 @@ namespace Exe{
             group.Add(g);
             speakToClassButton.gameObject.SetActive(true);
             UpdateList();
-            DisplayGroupItems();
-        }
-
-        public void DisplayGroupItems(){
-            groupInfo.gameObject.SetActive(true);
-            groupFrame.gameObject.SetActive(true);
+            DisplayStudents();
         }
 
         /**
@@ -376,7 +366,11 @@ namespace Exe{
             }
         }
 
-        
+        private void DisplayMainGroup(){
+            groupList.ResetMainGroup();
+            groupList.SetMainGroup(groupList.groupList[currentGroup]);
+        }
+
         //Fonctions appelées avec les callbacks de PlayerItem
         public void StudentSpeakToGroup(Player p) {
             SwitchVocal(Convert.ToByte(currentGroup+1));

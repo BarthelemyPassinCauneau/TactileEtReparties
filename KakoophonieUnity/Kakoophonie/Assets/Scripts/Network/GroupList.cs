@@ -54,5 +54,21 @@ namespace Exe{
             }
         }
 
+        public void SetMainGroup(Groups g){
+            foreach(GroupItem GI in GroupItemList.Values){
+                if (GI.group == g){
+                    GI._name.color = Color.blue;
+                    GI._name.fontSize = 44;
+                }
+            }
+        }
+        
+        public void ResetMainGroup(){
+            foreach(GroupItem GI in GroupItemList.Values){
+                GI._name.color = Color.black;
+                GI._name.fontSize = 36;
+            }
+        }
+
     }
 }
