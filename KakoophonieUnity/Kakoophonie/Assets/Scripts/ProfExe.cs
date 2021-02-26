@@ -60,6 +60,7 @@ namespace Exe{
             ChooseKey.onValueChanged.AddListener(delegate {DropdownValueChanged(ChooseKey.GetComponent<Dropdown>());});
             ChooseNote.onValueChanged.AddListener(delegate {DropdownValueChanged(ChooseNote.GetComponent<Dropdown>());});
             image.sprite = Resources.Load<Sprite>("Images/Sol/Do");
+            for(int i = 0; i < initialGroupSize-1; i++) AddGroup();
         }
 
         private void Update() {
